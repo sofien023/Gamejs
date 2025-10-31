@@ -149,6 +149,9 @@
           score += Math.round(20 / numberOfQuestions);
         }
       }
+      if (score >20){
+        score =20 
+      }
 
       showResult(score);
     }
@@ -170,7 +173,7 @@
       container.appendChild(gradeText);
 
       const scoreText = document.createElement("p");
-      scoreText.textContent = `Your score = ${score}`;
+      scoreText.textContent = `Your score = ${score} /20`;
       container.appendChild(scoreText);
 
       const replayButton = document.createElement("button");
