@@ -120,9 +120,9 @@
   <canvas id="canvas"></canvas>
 
   <div class="lang-switcher">
-    <button class="lang-btn active" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('fr')">FR</button>
-    <button class="lang-btn" onclick="setLang('ar')">AR</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
+    <button class="lang-btn" data-lang="ar">AR</button>
   </div>
 
   <div id="app"></div>
@@ -178,6 +178,8 @@
   };
 
   // ── Language ──
+  let currentScreen = null;
+
   function detectLang(){
     const s = localStorage.getItem('quiz-lang');
     if(s) return s;
@@ -193,12 +195,15 @@
     document.documentElement.setAttribute('lang', l);
     document.documentElement.setAttribute('dir', l==='ar'?'rtl':'ltr');
     document.body.classList.toggle('ar', l==='ar');
-    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.textContent===l.toUpperCase()));
+    document.querySelectorAll('.lang-btn[data-lang]').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
     localStorage.setItem('quiz-lang', l);
-    // re-render current screen
-    if(currentScreen) currentScreen();
+    if(typeof showSetup === 'function' && currentScreen) currentScreen();
   }
-  setLang(lang);
+
+  // Bind lang buttons after script runs
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(b=>{
+    b.addEventListener('click', ()=> setLang(b.dataset.lang));
+  });
 
   const t = ()=> T[lang];
 
@@ -228,7 +233,6 @@
 
   // ── Helpers ──
   const app = document.getElementById('app');
-  let currentScreen = null;
 
   function render(html){ app.innerHTML=`<div class="card">${html}</div>`; }
 
@@ -388,7 +392,8 @@
     if(clr) clr.addEventListener('click',()=>{ clearHistory(); showHistory(); });
   }
 
-  // Boot
+  // Boot — init lang then start
+  setLang(lang);
   showSetup();
   </script>
 </body>
