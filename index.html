@@ -313,6 +313,7 @@
         <p class="hint">${t().hint} <kbd>Enter</kbd></p>
       `);
       const inp=document.getElementById('inp'), fb=document.getElementById('fb');
+      inp.focus();
       function submit(){
         const v=parseInt(inp.value);
         if(isNaN(v)){ fb.textContent=t().err_num; fb.className='feedback err'; inp.classList.add('wrong'); return; }
@@ -320,7 +321,7 @@
         else{ inp.classList.add('wrong'); fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
         document.getElementById('go').disabled=true; inp.disabled=true;
         current++;
-        setTimeout(showQuestion,900);
+        setTimeout(showQuestion, 150);
       }
       document.getElementById('go').addEventListener('click',submit);
       inp.addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
