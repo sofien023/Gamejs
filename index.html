@@ -306,6 +306,7 @@
   /* ── Translations ── */
   const T = {
     en:{
+      logo1:'Test your',logo2:'Brain',
       badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',
       new_game:'New game',how_many:'How many questions?',choose:'Choose between 1 and 20',
       difficulty:'Difficulty',easy:'Easy',medium:'Medium',hard:'Hard',
@@ -323,6 +324,7 @@
       wrong_prefix:'✗ Answer was'
     },
     fr:{
+      logo1:'Teste ton',logo2:'Cerveau',
       badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',
       new_game:'Nouveau jeu',how_many:'Combien de questions ?',choose:'Choisir entre 1 et 20',
       difficulty:'Difficulté',easy:'Facile',medium:'Moyen',hard:'Difficile',
@@ -340,6 +342,7 @@
       wrong_prefix:'✗ Réponse :'
     },
     ar:{
+      logo1:'تحدَّ',logo2:'عقلك',
       badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',
       new_game:'لعبة جديدة',how_many:'كم سؤالاً تريد؟',choose:'اختر بين 1 و 20',
       difficulty:'الصعوبة',easy:'سهل',medium:'متوسط',hard:'صعب',
@@ -438,7 +441,7 @@
 
   function topBar(badgeKey){
     return `<div class="card-top">
-      <div class="logo-text">Test your<span>Brain</span></div>
+      <div class="logo-text">${t().logo1} <span>${t().logo2}</span></div>
       <div class="badge" role="status"><span class="badge-dot" aria-hidden="true"></span>${t()[badgeKey]}</div>
     </div>`;
   }
