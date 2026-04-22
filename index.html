@@ -136,7 +136,8 @@
     body.ar .section-label{letter-spacing:0;}
 
     /* ── Difficulty row ── */
-    .diff-row,.mode-row{display:flex;gap:6px;margin-bottom:1.5rem;}
+    .diff-row{display:flex;gap:6px;margin-bottom:1.5rem;}
+    .mode-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:6px;margin-bottom:1.5rem;}
     .diff-btn,.mode-btn{
       flex:1;padding:0.55rem 0.4rem;font-family:'DM Mono',monospace;font-size:0.72rem;
       letter-spacing:0.05em;text-transform:uppercase;
@@ -277,7 +278,8 @@
       .card{padding:1.8rem 1.5rem;}
       .history-row{grid-template-columns:1fr auto;}
       .history-grade{display:none;}
-      .diff-row,.mode-row{flex-wrap:wrap;}
+      .diff-row{flex-wrap:wrap;}
+      .mode-row{grid-template-columns:1fr 1fr 1fr;}
     }
   </style>
 </head>
@@ -307,7 +309,7 @@
       badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',
       new_game:'New game',how_many:'How many questions?',choose:'Choose between 1 and 20',
       difficulty:'Difficulty',easy:'Easy',medium:'Medium',hard:'Hard',
-      mode:'Operation',mult:'×',div:'÷',add:'+',sub:'−',
+      mode:'Operation',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Random',
       start:'Start Game',play_again:'Play Again',change_q:'Change Settings',view_history:'View History',
       back:'Back',clear_history:'Clear',
       q_label:'Question',progress:'Progress',submit:'Submit',timer_label:'Time',
@@ -324,7 +326,7 @@
       badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',
       new_game:'Nouveau jeu',how_many:'Combien de questions ?',choose:'Choisir entre 1 et 20',
       difficulty:'Difficulté',easy:'Facile',medium:'Moyen',hard:'Difficile',
-      mode:'Opération',mult:'×',div:'÷',add:'+',sub:'−',
+      mode:'Opération',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Aléatoire',
       start:'Commencer',play_again:'Rejouer',change_q:'Paramètres',view_history:"Voir l'historique",
       back:'Retour',clear_history:'Effacer',
       q_label:'Question',progress:'Progression',submit:'Valider',timer_label:'Temps',
@@ -341,7 +343,7 @@
       badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',
       new_game:'لعبة جديدة',how_many:'كم سؤالاً تريد؟',choose:'اختر بين 1 و 20',
       difficulty:'الصعوبة',easy:'سهل',medium:'متوسط',hard:'صعب',
-      mode:'العملية',mult:'×',div:'÷',add:'+',sub:'−',
+      mode:'العملية',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'عشوائي',
       start:'ابدأ اللعبة',play_again:'العب مجدداً',change_q:'الإعدادات',view_history:'عرض السجل',
       back:'رجوع',clear_history:'مسح',
       q_label:'سؤال',progress:'التقدم',submit:'إرسال',timer_label:'الوقت',
@@ -357,9 +359,9 @@
   };
 
   const DIFFICULTY = {
-    easy:  {min:1,max:5, timePerQ:20},
-    medium:{min:1,max:10,timePerQ:15},
-    hard:  {min:6,max:12,timePerQ:10}
+    easy:  {min:1,max:5, timePerQ:15},
+    medium:{min:1,max:10,timePerQ:10},
+    hard:  {min:6,max:12,timePerQ:5}
   };
 
   /* ── State ── */
@@ -367,7 +369,7 @@
   let currentTheme  = detectTheme();
   let currentScreen = null;
   let selectedDiff  = 'medium';
-  let selectedMode  = 'mult';
+  let selectedMode  = 'random';
 
   /* ── Theme ── */
   function detectTheme(){
@@ -469,12 +471,15 @@
 
   function genQuestion(mode,diff){
     const {min,max}=DIFFICULTY[diff];
+    // If random, pick one of the four operations at random each question
+    const ops=['mult','div','add','sub'];
+    const op=mode==='random'?ops[Math.floor(Math.random()*ops.length)]:mode;
     let a=Math.floor(Math.random()*(max-min+1))+min;
     let b=Math.floor(Math.random()*(max-min+1))+min;
     let answer,display;
-    if(mode==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
-    else if(mode==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
-    else if(mode==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
+    if(op==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
+    else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
+    else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
     else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
     return{display,answer};
   }
@@ -497,6 +502,7 @@
 
       <div class="section-label">${t().mode}</div>
       <div class="mode-row" role="group" aria-label="${t().mode}">
+        <button class="mode-btn${selectedMode==='random'?' active':''}" data-mode="random">${t().mode_random}</button>
         <button class="mode-btn${selectedMode==='mult'?' active':''}" data-mode="mult">${t().mult}</button>
         <button class="mode-btn${selectedMode==='div'?' active':''}" data-mode="div">${t().div}</button>
         <button class="mode-btn${selectedMode==='add'?' active':''}" data-mode="add">${t().add}</button>
