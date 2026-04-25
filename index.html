@@ -157,6 +157,16 @@
     [data-theme="light"] .best-streak-banner{background:rgba(0,153,168,0.05);border-color:rgba(0,153,168,0.15);}
     .best-streak-banner strong{color:var(--accent);font-size:1rem;font-family:'Fraunces',serif;font-weight:300;}
 
+    /* ── Dashboard Grid ── */
+    .dashboard-stats{
+      display:grid;grid-template-columns:repeat(3, 1fr);gap:1px;
+      background:var(--border);border:1px solid var(--border);
+      border-radius:4px;overflow:hidden;margin-bottom:1.5rem;
+    }
+    .stat-box{background:var(--bg3);padding:1.2rem 0.4rem;text-align:center;transition:background 0.35s;}
+    .stat-num{font-family:'Fraunces',serif;font-size:1.8rem;color:var(--accent);line-height:1.2;}
+    .stat-lbl{font-size:0.6rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
     /* ── Progress ── */
     .progress-wrap{margin-bottom:1.2rem;}
     .progress-meta{
@@ -172,7 +182,7 @@
     .timer-wrap{margin-bottom:1.2rem;}
     .timer-meta{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);margin-bottom:4px;}
     .timer-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
-    .timer-fill{height:100%;border-radius:2px;transition:width 0.1s linear,background 0.3s;background:var(--timer-ok);}
+    .timer-fill{height:100%;border-radius:2px;transition:width:0.1s linear,background 0.3s;background:var(--timer-ok);}
     .timer-fill.warn{background:var(--timer-warn);}
     .timer-fill.danger{background:var(--timer-danger);}
 
@@ -215,9 +225,8 @@
     .input-wrap{position:relative;margin-bottom:1.2rem;}
     .input{
       width:100%;background:var(--input-bg);border:1px solid var(--border);
-      border-radius:2px;padding:0.9rem 1.1rem;
-      font-family:'DM Mono',monospace;font-size:1rem;color:var(--text);
-      outline:none;transition:border-color 0.2s,background 0.35s,color 0.35s;
+      padding:1.1rem;font-family:'DM Mono',monospace;font-size:1.4rem;color:var(--text);
+      border-radius:2px;outline:none;transition:border-color 0.2s,background 0.35s,color 0.35s;
       -moz-appearance:textfield;
     }
     body.ar .input{font-family:'Cairo',sans-serif;}
@@ -331,7 +340,7 @@
   const T = {
     en:{
       logo1:'Test your',logo2:'Brain',
-      badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',
+      badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',badge_dashboard:'Dashboard',
       new_game:'New game',how_many:'How many questions?',choose:'Choose between 1 and 20',
       difficulty:'Difficulty',easy:'Easy',medium:'Medium',hard:'Hard',
       mode:'Operation',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Random',
@@ -346,11 +355,12 @@
       history_title:'Game History',history_empty:'No games played yet.',
       grade_perfect:'Perfect! 🏆',grade_excellent:'Excellent! 🔥',grade_amazing:"You're Amazing! 🌟",
       grade_keep:'Keep Going 👍',grade_harder:'Try Harder 💪',grade_lose:'You Lose 😢',
-      wrong_prefix:'✗ Answer was',time_bonus:'+bonus',skipped:'↷ Skipped'
+      wrong_prefix:'✗ Answer was',time_bonus:'+bonus',skipped:'↷ Skipped',
+      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress'
     },
     fr:{
       logo1:'Teste ton',logo2:'Cerveau',
-      badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',
+      badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',badge_dashboard:'Tableau',
       new_game:'Nouveau jeu',how_many:'Combien de questions ?',choose:'Choisir entre 1 et 20',
       difficulty:'Difficulté',easy:'Facile',medium:'Moyen',hard:'Difficile',
       mode:'Opération',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Aléatoire',
@@ -365,11 +375,12 @@
       history_title:'Historique des parties',history_empty:'Aucune partie jouée.',
       grade_perfect:'Parfait ! 🏆',grade_excellent:'Excellent ! 🔥',grade_amazing:'Incroyable ! 🌟',
       grade_keep:'Continue ! 👍',grade_harder:'Encore effort ! 💪',grade_lose:'Perdu 😢',
-      wrong_prefix:'✗ Réponse :',time_bonus:'+bonus',skipped:'↷ Passé'
+      wrong_prefix:'✗ Réponse :',time_bonus:'+bonus',skipped:'↷ Passé',
+      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression'
     },
     ar:{
       logo1:'تحدَّ',logo2:'عقلك',
-      badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',
+      badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',badge_dashboard:'لوحة التحكم',
       new_game:'لعبة جديدة',how_many:'كم سؤالاً تريد؟',choose:'اختر بين 1 و 20',
       difficulty:'الصعوبة',easy:'سهل',medium:'متوسط',hard:'صعب',
       mode:'العملية',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'عشوائي',
@@ -384,7 +395,8 @@
       history_title:'سجل الألعاب',history_empty:'لم تُلعب أي لعبة بعد.',
       grade_perfect:'مثالي! 🏆',grade_excellent:'ممتاز! 🔥',grade_amazing:'رائع! 🌟',
       grade_keep:'واصل! 👍',grade_harder:'حاول أكثر! 💪',grade_lose:'خسرت 😢',
-      wrong_prefix:'✗ الإجابة كانت',time_bonus:'+مكافأة',skipped:'↷ تخطي'
+      wrong_prefix:'✗ الإجابة كانت',time_bonus:'+مكافأة',skipped:'↷ تخطي',
+      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك'
     }
   };
 
@@ -430,76 +442,81 @@
     playTone(220,'sawtooth',0.18,0.12);
   }
   function soundTimeout(){
-    playTone(180,'sine',0.22,0.10);
+    playTone(180,'sine',0.3,0.15);
   }
   function soundSkip(){
-    playTone(330,'sine',0.10,0.08);
+    playTone(350,'triangle',0.1,0.1);
   }
 
-  /* ── Theme ── */
-  function detectTheme(){
-    return localStorage.getItem('quiz-theme') ||
-      (window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');
-  }
-  function setTheme(th){ currentTheme=th; document.documentElement.setAttribute('data-theme',th); localStorage.setItem('quiz-theme',th); }
-  function toggleTheme(){ setTheme(currentTheme==='dark'?'light':'dark'); }
-
-  /* ── Language ── */
+  /* ── Core Logic ── */
   function detectLang(){
-    const s=localStorage.getItem('quiz-lang'); if(s) return s;
-    const b=(navigator.language||'en').toLowerCase().slice(0,2);
-    return b==='fr'?'fr':b==='ar'?'ar':'en';
+    const s=localStorage.getItem('quiz-lang')||navigator.language||'en';
+    if(s.startsWith('ar')) return 'ar';
+    if(s.startsWith('fr')) return 'fr';
+    return 'en';
   }
   function setLang(l){
     lang=l;
-    document.documentElement.setAttribute('lang',l);
-    document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
-    document.body.classList.toggle('ar',l==='ar');
-    document.querySelectorAll('.lang-btn[data-lang]').forEach(b=>{
-      b.classList.toggle('active',b.dataset.lang===l);
-      b.setAttribute('aria-pressed',String(b.dataset.lang===l));
-    });
     localStorage.setItem('quiz-lang',l);
+    document.documentElement.lang=l;
+    document.documentElement.dir=l==='ar'?'rtl':'ltr';
+    if(l==='ar') document.body.classList.add('ar'); else document.body.classList.remove('ar');
+    document.querySelectorAll('.lang-btn').forEach(b=>{
+      b.classList.toggle('active',b.dataset.lang===l);
+    });
     if(currentScreen) currentScreen();
   }
-  const t = ()=>T[lang];
+  function t(){ return T[lang]; }
 
-  /* ── Prefs ── */
-  function loadPref(key,def){ return localStorage.getItem(key)||def; }
-  function savePref(key,val){ localStorage.setItem(key,val); }
+  function detectTheme(){ return localStorage.getItem('quiz-theme')||'dark'; }
+  function setTheme(t){
+    currentTheme=t;
+    localStorage.setItem('quiz-theme',t);
+    document.documentElement.setAttribute('data-theme',t);
+  }
+  function toggleTheme(){ setTheme(currentTheme==='dark'?'light':'dark'); }
 
-  /* ── History ── */
-  const HK='quiz-history';
-  function loadHistory(){ try{return JSON.parse(localStorage.getItem(HK)||'[]');}catch{return[];} }
-  function saveHistory(h){ try{localStorage.setItem(HK,JSON.stringify(h));}catch{} }
-  function addHistory(e){ const h=loadHistory(); h.unshift(e); if(h.length>50)h.splice(50); saveHistory(h); }
-  function clearHistory(){ saveHistory([]); }
-  function allTimeBestStreak(){
+  function loadPref(k,def){ return localStorage.getItem(k)||def; }
+  function savePref(k,v){ localStorage.setItem(k,v); }
+
+  function loadHistory(){ try{return JSON.parse(localStorage.getItem('quiz-history')||'[]');}catch(e){return [];} }
+  function addHistory(item){
     const h=loadHistory();
-    return h.reduce((best,g)=>Math.max(best,g.bestStreak||0),0);
+    h.unshift(item);
+    localStorage.setItem('quiz-history',JSON.stringify(h.slice(0,50)));
+  }
+  function clearHistory(){ localStorage.removeItem('quiz-history'); }
+  function allTimeBestStreak(){ return loadHistory().reduce((m,h)=>Math.max(m,h.bestStreak||0),0); }
+
+  function getGlobalStats() {
+    const h = loadHistory();
+    if (h.length === 0) return { total: 0, avg: 0, games: 0 };
+    const totalSolved = h.reduce((s, g) => s + g.score, 0);
+    const totalQ = h.reduce((s, g) => s + g.total, 0);
+    return {
+      total: totalSolved,
+      avg: Math.round((totalSolved / totalQ) * 100),
+      games: h.length
+    };
   }
 
-  /* ── Particles ── */
-  const canvas=document.getElementById('canvas');
-  const ctx=canvas.getContext('2d');
-  let W,H,pts=[];
-  function getRGB(){ return currentTheme==='light'?{r:0,g:153,b:168}:{r:0,g:229,b:180}; }
-  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-  resize(); window.addEventListener('resize',resize);
-  function Pt(){ this.x=Math.random()*W;this.y=Math.random()*H;this.r=Math.random()*1.1+0.3;this.vx=(Math.random()-0.5)*0.25;this.vy=(Math.random()-0.5)*0.25;this.a=Math.random()*0.3+0.08; }
-  for(let i=0;i<80;i++) pts.push(new Pt());
+  /* ── Canvas Background ── */
+  const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+  let pts=[],w,h;
+  function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; initPts(); }
+  function initPts(){ pts=[]; for(let i=0;i<45;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4}); }
+  window.addEventListener('resize',resize); resize();
   function drawPts(){
-    ctx.clearRect(0,0,W,H);
-    const {r,g,b}=getRGB(), al=currentTheme==='light'?0.5:1;
-    pts.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(${r},${g},${b},${p.a*al})`;ctx.fill();
-    });
-    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
-      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
-      if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(${r},${g},${b},${0.04*(1-d/110)*al})`;ctx.lineWidth=0.5;ctx.stroke();}
+    ctx.clearRect(0,0,w,h);
+    const al=currentTheme==='dark'?1:0.4, r=currentTheme==='dark'?0:0, g=currentTheme==='dark'?229:153, b=currentTheme==='dark'?180:168;
+    for(let i=0;i<pts.length;i++){
+      let p=pts[i]; p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1;
+      ctx.fillStyle=`rgba(${r},${g},${b},${0.15*al})`; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill();
+      for(let j=i+1;j<pts.length;j++){
+        let d=Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
+        if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(${r},${g},${b},${0.04*(1-d/110)*al})`;ctx.lineWidth=0.5;ctx.stroke();}
+      }
     }
     requestAnimationFrame(drawPts);
   }
@@ -542,43 +559,49 @@
     })(start);
   }
 
-  /* ── Question generation — split into two clean functions ── */
-  function pickOperation(mode){
-    if(mode!=='random') return mode;
-    const ops=['mult','div','add','sub'];
-    return ops[Math.floor(Math.random()*ops.length)];
-  }
+  /* ── DASHBOARD ── */
+  function showDashboard(){
+    currentScreen = showDashboard;
+    const stats = getGlobalStats();
+    const best = allTimeBestStreak();
+    
+    if (stats.games === 0) {
+      showSetup();
+      return;
+    }
 
-  function buildQuestion(op, diff){
-    const {min,max}=DIFFICULTY[diff];
-    let a=Math.floor(Math.random()*(max-min+1))+min;
-    let b=Math.floor(Math.random()*(max-min+1))+min;
-    let answer,display;
-    if(op==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
-    else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
-    else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
-    else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
-    return{display,answer,op};
-  }
+    render(`
+      ${topBar('badge_dashboard')}
+      <div class="q-label"><span class="q-label-left">${t().dash_title}</span></div>
+      <div class="dashboard-stats">
+        <div class="stat-box"><div class="stat-num" id="ds0">0</div><div class="stat-lbl">${t().dash_total}</div></div>
+        <div class="stat-box"><div class="stat-num" id="ds1">0</div><div class="stat-lbl">${t().dash_avg}</div></div>
+        <div class="stat-box"><div class="stat-num" id="ds2">0</div><div class="stat-lbl">${t().dash_games}</div></div>
+      </div>
+      ${best>0?`<div class="best-streak-banner"><span>${t().all_time_best}</span><strong>🔥 ${best}</strong></div>`:''}
+      <div class="divider"></div>
+      <button class="btn" id="newGame">${t().new_game}</button>
+      <button class="btn btn-outline" id="viewHist">${t().view_history}</button>
+    `);
 
-  function genQuestion(mode,diff){
-    return buildQuestion(pickOperation(mode),diff);
+    [stats.total, stats.avg, stats.games].forEach((v, i) => {
+      const el = document.getElementById('ds' + i);
+      if (el) animateCount(el, v, 800);
+    });
+
+    document.getElementById('newGame').addEventListener('click', showSetup);
+    document.getElementById('viewHist').addEventListener('click', showHistory);
   }
 
   /* ── SETUP ── */
   function showSetup(){
     currentScreen=showSetup;
-    const best=allTimeBestStreak();
+    
     render(`
       ${topBar('badge_quiz')}
       <div class="q-label"><span class="q-label-left">${t().new_game}</span></div>
       <div class="q-text">${t().how_many.replace('?','<em>?</em>')}</div>
       <p class="q-sub">${t().choose}</p>
-
-      ${best>0?`<div class="best-streak-banner">
-        <span>${t().all_time_best}</span>
-        <strong>🔥 ${best}</strong>
-      </div>`:''}
 
       <div class="section-label">${t().difficulty}</div>
       <div class="diff-row" role="group" aria-label="${t().difficulty}">
@@ -602,7 +625,7 @@
       </div>
       <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
       <button class="btn" id="go">${t().start}</button>
-      <button class="btn btn-ghost" id="hist">${t().view_history}</button>
+      ${loadHistory().length > 0 ? `<button class="btn btn-ghost" id="backDash">${t().back}</button>` : ''}
       <p class="hint">${t().hint} <kbd>Enter</kbd></p>
     `);
 
@@ -633,13 +656,27 @@
       startGame(v,selectedDiff,selectedMode);
     }
     document.getElementById('go').addEventListener('click',submit);
-    document.getElementById('hist').addEventListener('click',showHistory);
+    const backBtn = document.getElementById('backDash');
+    if (backBtn) backBtn.addEventListener('click', showDashboard);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
   }
 
   /* ── GAME ── */
   function startGame(total,diff,mode){
-    const questions=Array.from({length:total},()=>genQuestion(mode,diff));
+    const pickOperation = (m) => (m !== 'random' ? m : ['mult','div','add','sub'][Math.floor(Math.random()*4)]);
+    const questions = Array.from({length:total}, () => {
+      const op = pickOperation(mode);
+      const {min,max}=DIFFICULTY[diff];
+      let a=Math.floor(Math.random()*(max-min+1))+min;
+      let b=Math.floor(Math.random()*(max-min+1))+min;
+      let answer,display;
+      if(op==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
+      else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
+      else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
+      else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
+      return{display,answer,op};
+    });
+
     const timePerQ=DIFFICULTY[diff].timePerQ;
     const bonusThreshold=DIFFICULTY[diff].bonusThreshold;
     let current=0,score=0,bonusScore=0,streak=0,bestStreak=0,skipped=0;
@@ -648,147 +685,51 @@
 
     function clearTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
     function removeEscListener(){ if(escListener){document.removeEventListener('keydown',escListener);escListener=null;} }
-
     function lockInput(){
-      const inp=document.getElementById('inp');
-      const go=document.getElementById('go');
-      if(inp){ inp.disabled=true; }
-      if(go) { go.disabled=true; }
+      const inp=document.getElementById('inp'), go=document.getElementById('go');
+      if(inp) inp.disabled=true; if(go) go.disabled=true;
     }
-
-    function refocusInput(){
-      // After re-enabling, explicitly refocus
-      requestAnimationFrame(()=>{
-        const inp=document.getElementById('inp');
-        if(inp && !inp.disabled) inp.focus();
-      });
-    }
-
     function advance(){ clearTimer(); removeEscListener(); current++; setTimeout(showQuestion,200); }
 
-    function timeoutQuestion(){
-      if(answered) return;
-      answered=true;
-      clearTimer(); removeEscListener();
-      lockInput();
-      streak=0;
-      soundTimeout();
-      const fb=document.getElementById('fb');
-      const card=document.querySelector('.card');
-      const inp=document.getElementById('inp');
-      const sb=document.getElementById('sb');
-      if(fb){ fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
-      if(inp){ inp.classList.add('wrong'); }
-      if(card){ card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400); }
-      if(sb) sb.textContent='🔥 0';
-      setTimeout(advance, 1200);
-    }
-
-    function skipQuestion(){
-      if(answered) return;
-      answered=true;
-      clearTimer(); removeEscListener();
-      lockInput();
-      skipped++;
-      streak=0;
-      soundSkip();
-      const fb=document.getElementById('fb');
-      const inp=document.getElementById('inp');
-      const sb=document.getElementById('sb');
-      if(fb){ fb.textContent=t().skipped; fb.className='feedback err'; }
-      if(inp){ inp.classList.add('wrong'); }
-      if(sb) sb.textContent='🔥 0';
-      setTimeout(advance, 800);
-    }
-
     function doAnswer(v){
-      if(answered) return;
-      answered=true;
-      clearTimer(); removeEscListener();
-      lockInput();
-
-      const fb=document.getElementById('fb');
-      const card=document.querySelector('.card');
-      const inp=document.getElementById('inp');
-      const sb=document.getElementById('sb');
-
+      if(answered) return; answered=true;
+      clearTimer(); removeEscListener(); lockInput();
+      const fb=document.getElementById('fb'), card=document.querySelector('.card'), inp=document.getElementById('inp'), sb=document.getElementById('sb');
       if(v===questions[current].answer){
-        score++;
-        streak++;
-        if(streak>bestStreak) bestStreak=streak;
-
-        // Time bonus: reward fast answers
-        const timeRatio=timeLeft/timePerQ;
-        let bonusHtml='';
-        if(timeRatio>=bonusThreshold){
-          bonusScore++;
-          bonusHtml=`<span class="time-bonus">${t().time_bonus}</span>`;
-        }
-
+        score++; streak++; if(streak>bestStreak) bestStreak=streak;
+        let bonusHtml=''; if((timeLeft/timePerQ)>=bonusThreshold){ bonusScore++; bonusHtml=`<span class="time-bonus">${t().time_bonus}</span>`; }
         if(inp) inp.classList.add('correct');
         if(fb){ fb.innerHTML=`${t().correct_msg}${bonusHtml}`; fb.className='feedback ok'; }
         if(card){ card.classList.add('flash-ok'); setTimeout(()=>card.classList.remove('flash-ok'),500); }
         if(sb){ sb.textContent='🔥 '+streak; sb.classList.remove('pop'); void sb.offsetWidth; sb.classList.add('pop'); }
         soundCorrect();
       } else {
-        streak=0;
-        if(inp) inp.classList.add('wrong');
+        streak=0; if(inp) inp.classList.add('wrong');
         if(fb){ fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
         if(card){ card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400); }
-        if(sb) sb.textContent='🔥 0';
-        soundWrong();
+        if(sb) sb.textContent='🔥 0'; soundWrong();
       }
       setTimeout(advance, 1200);
     }
 
-    function startTimer(){
-      clearTimer();
-      timeLeft=timePerQ;
-      const fill=document.getElementById('tf');
-      const tEl=document.getElementById('tl');
-      const timerTrack=document.getElementById('timer-track');
-      if(fill) fill.style.width='100%';
-      if(timerTrack) timerTrack.setAttribute('aria-valuenow','100');
-      timerInterval=setInterval(()=>{
-        timeLeft=Math.max(0,timeLeft-0.1);
-        const pct=(timeLeft/timePerQ)*100;
-        if(fill){
-          fill.style.width=pct+'%';
-          fill.className='timer-fill'+(pct<30?' danger':pct<60?' warn':'');
-        }
-        if(tEl) tEl.textContent=Math.ceil(timeLeft)+'s';
-        if(timerTrack) timerTrack.setAttribute('aria-valuenow',Math.round(pct));
-        if(timeLeft<=0) timeoutQuestion();
-      },100);
-    }
-
     function showQuestion(){
       if(current>=total){ showResult(score,total,bestStreak,bonusScore,skipped,diff,mode); return; }
-      currentScreen=showQuestion;
-      answered=false;
-      const q=questions[current];
-      const pct=Math.round((current/total)*100);
-
+      currentScreen=showQuestion; answered=false;
+      const q=questions[current], pct=Math.round((current/total)*100);
       render(`
         ${topBar('badge_game')}
         <div class="progress-wrap">
-          <div class="progress-meta">
-            <span>${t().progress}</span>
-            <span id="sb" class="streak-badge">🔥 ${streak}</span>
-            <span>${pct}%</span>
-          </div>
+          <div class="progress-meta"><span>${t().progress}</span><span id="sb" class="streak-badge">🔥 ${streak}</span><span>${pct}%</span></div>
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
         </div>
         <div class="timer-wrap">
           <div class="timer-meta"><span>${t().timer_label}</span><span id="tl">${timePerQ}s</span></div>
           <div class="timer-track" id="timer-track" role="progressbar" aria-label="${t().timer_label}"
-               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
             <div class="timer-fill" id="tf" style="width:100%"></div>
           </div>
         </div>
-        <div class="q-label">
-          <span class="q-label-left">${t().q_label} ${current+1} / ${total}</span>
-        </div>
+        <div class="q-label"><span class="q-label-left">${t().q_label} ${current+1} / ${total}</span></div>
         <div class="q-text" aria-label="Question">${q.display} = ?</div>
         <div class="input-wrap">
           <input id="inp" class="input" type="number" placeholder="…"
@@ -796,71 +737,49 @@
         </div>
         <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
         <button class="btn" id="go">${t().submit}</button>
-        <p class="skip-hint">${t().skip_hint} <kbd>Esc</kbd></p>
+        <p class="hint">${t().hint} <kbd>Esc</kbd></p>
         <p class="hint">${t().hint} <kbd>Enter</kbd></p>
       `);
-
-      const inp=document.getElementById('inp');
-      inp.focus();
-      startTimer();
-
-      // Esc to skip
-      escListener=function(e){ if(e.key==='Escape') skipQuestion(); };
+      const inp=document.getElementById('inp'), fill=document.getElementById('tf'), tEl=document.getElementById('tl');
+      inp.focus(); timeLeft=timePerQ;
+      timerInterval=setInterval(()=>{
+        timeLeft=Math.max(0,timeLeft-0.1); const p=(timeLeft/timePerQ)*100;
+        if(fill){ fill.style.width=p+'%'; fill.className='timer-fill'+(p<30?' danger':p<60?' warn':''); }
+        if(tEl) tEl.textContent=Math.ceil(timeLeft)+'s';
+        if(timeLeft<=0){ clearTimer(); if(!answered) { streak=0; soundTimeout(); doAnswer(null); } }
+      },100);
+      escListener=(e)=>{ if(e.key==='Escape'){ clearTimer(); skipped++; streak=0; soundSkip(); advance(); } };
       document.addEventListener('keydown',escListener);
-
-      let sub=false;
-      function submit(){
-        if(sub) return; sub=true;
-        const v=parseInt(inp.value);
-        if(isNaN(v)){
-          const fb=document.getElementById('fb');
-          if(fb){ fb.textContent=t().err_num; fb.className='feedback err'; }
-          inp.classList.add('wrong');
-          setTimeout(()=>{ inp.classList.remove('wrong'); inp.value=''; inp.focus(); },600);
-          sub=false; return;
-        }
-        doAnswer(v);
-      }
-      document.getElementById('go').addEventListener('click',submit);
-      inp.addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+      document.getElementById('go').addEventListener('click',()=>doAnswer(parseInt(inp.value)));
+      inp.addEventListener('keydown',e=>{if(e.key==='Enter') doAnswer(parseInt(inp.value));});
     }
-
     showQuestion();
   }
 
   /* ── RESULT ── */
   function showResult(score,total,bestStreak,bonusScore,skipped,diff,mode){
     currentScreen=()=>showResult(score,total,bestStreak,bonusScore,skipped,diff,mode);
-    const missed=total-score;
-    const pct=total>0?Math.round((score/total)*100):0;
-    const scaled=Math.round((score/total)*20);
-    const g=gradeInfo(score,total);
+    const missed=total-score, pct=total>0?Math.round((score/total)*100):0, scaled=Math.round((score/total)*20), g=gradeInfo(score,total);
     addHistory({ts:Date.now(),score,total,scaled,pct,bestStreak,bonusScore,skipped,diff,mode,gradeLabel:g.label,gradeCls:g.cls});
-
     render(`
       ${topBar('badge_result')}
       <div class="q-label"><span class="q-label-left">${t().result_label}</span></div>
       <div class="q-text">${t().your_score.split(' ').map((w,i,a)=>i===a.length-1?`<em>${w}</em>`:w).join(' ')}</div>
-      <div class="score-grid" role="list">
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn0">0</div><div class="score-lbl">${t().correct}</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn1">0</div><div class="score-lbl">${t().missed}</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn2">0</div><div class="score-lbl">${t().grade_label} /20</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn3">0</div><div class="score-lbl">${t().accuracy} %</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn4">0</div><div class="score-lbl">${t().best_streak} 🔥</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn5">0</div><div class="score-lbl">${t().time_bonus} ⚡</div></div>
+      <div class="score-grid">
+        <div class="score-cell"><div class="score-num" id="sn0">0</div><div class="score-lbl">${t().correct}</div></div>
+        <div class="score-cell"><div class="score-num" id="sn1">0</div><div class="score-lbl">${t().missed}</div></div>
+        <div class="score-cell"><div class="score-num" id="sn2">0</div><div class="score-lbl">${t().grade_label} /20</div></div>
+        <div class="score-cell"><div class="score-num" id="sn3">0</div><div class="score-lbl">${t().accuracy} %</div></div>
+        <div class="score-cell"><div class="score-num" id="sn4">0</div><div class="score-lbl">${t().best_streak} 🔥</div></div>
+        <div class="score-cell"><div class="score-num" id="sn5">0</div><div class="score-lbl">${t().time_bonus} ⚡</div></div>
       </div>
-      <div class="grade-tag ${g.cls}" role="status">${g.label}</div>
+      <div class="grade-tag ${g.cls}">${g.label}</div>
       <div class="divider"></div>
       <button class="btn" id="again">${t().play_again}</button>
       <button class="btn btn-outline" id="change">${t().change_q}</button>
       <button class="btn btn-ghost" id="hist">${t().view_history}</button>
     `);
-
-    [score, missed, scaled, pct, bestStreak, bonusScore].forEach((v,i)=>{
-      const el=document.getElementById('sn'+i);
-      if(el) setTimeout(()=>animateCount(el,v,700),i*90);
-    });
-
+    [score, missed, scaled, pct, bestStreak, bonusScore].forEach((v,i)=>animateCount(document.getElementById('sn'+i),v,700));
     document.getElementById('again').addEventListener('click',()=>startGame(total,diff,mode));
     document.getElementById('change').addEventListener('click',showSetup);
     document.getElementById('hist').addEventListener('click',showHistory);
@@ -870,55 +789,25 @@
   function showHistory(){
     currentScreen=showHistory;
     const history=loadHistory();
-    let rows='';
-    if(history.length===0){
-      rows=`<p class="history-empty">${t().history_empty}</p>`;
-    } else {
-      rows=`<div class="history-list" role="list">`+
-        history.map(h=>{
-          const diffLabel = h.diff ? T[lang][h.diff]||h.diff : '';
-          const modeLabel = h.mode ? (MODE_LABELS[h.mode]||h.mode) : '';
-          return `
-          <div class="history-row" role="listitem">
-            <div>
-              <div class="history-row-top">
-                <span class="history-score">${h.score}/${h.total} · ${h.pct}%</span>
-                <span class="history-grade grade-tag ${h.gradeCls}" style="margin-bottom:0">${h.gradeLabel}</span>
-              </div>
-              <div class="history-row-bottom">
-                <span class="history-date">${formatDate(h.ts)}</span>
-                ${diffLabel?`<span class="history-meta-tag">${diffLabel}</span>`:''}
-                ${modeLabel?`<span class="history-meta-tag">${modeLabel}</span>`:''}
-                ${(h.bestStreak||0)>0?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}
-              </div>
-            </div>
-          </div>
-        `}).join('')+`</div>`;
-    }
+    let rows=history.length===0?`<p class="history-empty">${t().history_empty}</p>`:`<div class="history-list">`+
+      history.map(h=>`<div class="history-row"><div><div class="history-row-top"><span class="history-score">${h.score}/${h.total} · ${h.pct}%</span>
+      <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span></div>
+      <div class="history-row-bottom"><span class="history-date">${formatDate(h.ts)}</span>
+      <span class="history-meta-tag">${T[lang][h.diff]||h.diff}</span><span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
+      ${h.bestStreak?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}</div></div></div>`).join('')+`</div>`;
     render(`
       ${topBar('badge_history')}
-      <div class="history-header">
-        <div class="history-title">${t().history_title}</div>
-        ${history.length>0?`<button class="clear-btn" id="clr">${t().clear_history}</button>`:''}
-      </div>
-      ${rows}
-      <div class="divider"></div>
-      <button class="btn btn-outline" id="back">${t().back}</button>
+      <div class="history-header"><div class="history-title">${t().history_title}</div>${history.length>0?`<button class="clear-btn" id="clr">${t().clear_history}</button>`:''}</div>
+      ${rows}<div class="divider"></div><button class="btn btn-outline" id="back">${t().back}</button>
     `);
-    document.getElementById('back').addEventListener('click',showSetup);
-    const clr=document.getElementById('clr');
-    if(clr) clr.addEventListener('click',()=>{clearHistory();showHistory();});
+    document.getElementById('back').addEventListener('click', showDashboard);
+    const clr=document.getElementById('clr'); if(clr) clr.addEventListener('click',()=>{clearHistory();showDashboard();});
   }
 
   /* ── Boot ── */
-  document.querySelectorAll('.lang-btn[data-lang]').forEach(b=>{
-    b.addEventListener('click',()=>setLang(b.dataset.lang));
-  });
+  document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
   document.getElementById('themeToggle').addEventListener('click',toggleTheme);
-
-  setTheme(currentTheme);
-  setLang(lang);
-  showSetup();
+  setTheme(currentTheme); setLang(lang); showDashboard();
   </script>
 </body>
 </html>
