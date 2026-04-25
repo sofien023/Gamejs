@@ -148,6 +148,15 @@
     .diff-btn:hover,.mode-btn:hover{border-color:var(--accent);color:var(--accent);}
     .diff-btn.active,.mode-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
 
+    /* ── Best streak on setup ── */
+    .best-streak-banner{
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(0,229,180,0.05);border:1px solid rgba(0,229,180,0.12);
+      border-radius:3px;padding:0.55rem 0.9rem;margin-bottom:1.5rem;font-size:0.72rem;color:var(--muted);
+    }
+    [data-theme="light"] .best-streak-banner{background:rgba(0,153,168,0.05);border-color:rgba(0,153,168,0.15);}
+    .best-streak-banner strong{color:var(--accent);font-size:1rem;font-family:'Fraunces',serif;font-weight:300;}
+
     /* ── Progress ── */
     .progress-wrap{margin-bottom:1.2rem;}
     .progress-meta{
@@ -166,6 +175,14 @@
     .timer-fill{height:100%;border-radius:2px;transition:width 0.1s linear,background 0.3s;background:var(--timer-ok);}
     .timer-fill.warn{background:var(--timer-warn);}
     .timer-fill.danger{background:var(--timer-danger);}
+
+    /* ── Time bonus flash ── */
+    .time-bonus{
+      font-size:0.68rem;color:var(--accent);margin-left:6px;
+      display:inline-block;opacity:0;
+      animation:bonusPop 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes bonusPop{0%{opacity:0;transform:translateY(4px);}30%{opacity:1;transform:translateY(-2px);}100%{opacity:0;transform:translateY(-8px);}}
 
     /* ── Streak ── */
     .streak-badge{
@@ -210,6 +227,11 @@
     [data-theme="light"] .input:focus{border-color:rgba(0,153,168,0.5);}
     .input.correct{border-color:var(--success);}
     .input.wrong{border-color:var(--danger);}
+    .input:disabled{opacity:0.6;cursor:not-allowed;}
+
+    /* ── Skip hint ── */
+    .skip-hint{font-size:0.65rem;color:var(--muted);margin-top:-0.6rem;margin-bottom:1rem;opacity:0.75;}
+    .skip-hint kbd{background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:1px 5px;font-family:'DM Mono',monospace;font-size:0.63rem;transition:background 0.35s,border-color 0.35s;}
 
     .btn{
       width:100%;padding:0.8rem 1.6rem;
@@ -227,7 +249,7 @@
     .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);margin-top:0.8rem;}
     .btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--border-strong);}
 
-    .feedback{font-size:0.78rem;height:1.2rem;margin-bottom:0.8rem;transition:color 0.2s;}
+    .feedback{font-size:0.78rem;height:1.4rem;margin-bottom:0.8rem;transition:color 0.2s;display:flex;align-items:center;gap:6px;}
     .feedback.ok{color:var(--success);}
     .feedback.err{color:var(--danger);}
 
@@ -264,20 +286,22 @@
     .clear-btn{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.06em;background:transparent;border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:2px;cursor:pointer;transition:0.2s;text-transform:uppercase;}
     .clear-btn:hover{border-color:var(--danger);color:var(--danger);}
     .history-empty{font-size:0.8rem;color:var(--muted);text-align:center;padding:1.5rem 0;}
-    .history-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;max-height:280px;overflow-y:auto;}
+    .history-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;max-height:320px;overflow-y:auto;}
     .history-list::-webkit-scrollbar{width:4px;}
     .history-list::-webkit-scrollbar-track{background:transparent;}
     .history-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-    .history-row{background:var(--bg3);padding:0.8rem 1rem;display:grid;grid-template-columns:1fr auto auto;gap:1rem;align-items:center;font-size:0.78rem;transition:background 0.15s;}
+    .history-row{background:var(--bg3);padding:0.7rem 1rem;display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:center;font-size:0.78rem;transition:background 0.15s;}
     .history-row:hover{background:var(--bg2);}
-    .history-date{color:var(--muted);font-size:0.7rem;}
-    .history-score{color:var(--accent);font-weight:500;white-space:nowrap;}
-    .history-grade{font-size:0.65rem;padding:2px 8px;border-radius:2px;white-space:nowrap;}
+    .history-row-top{display:flex;justify-content:space-between;align-items:center;gap:0.5rem;}
+    .history-row-bottom{display:flex;align-items:center;gap:0.5rem;margin-top:2px;}
+    .history-date{color:var(--muted);font-size:0.66rem;}
+    .history-score{color:var(--accent);font-weight:500;white-space:nowrap;font-size:0.8rem;}
+    .history-grade{font-size:0.62rem;padding:2px 7px;border-radius:2px;white-space:nowrap;}
+    .history-meta-tag{font-size:0.6rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:0.05em;}
 
     @media(max-width:500px){
       .card{padding:1.8rem 1.5rem;}
-      .history-row{grid-template-columns:1fr auto;}
-      .history-grade{display:none;}
+      .history-row{grid-template-columns:1fr;}
       .diff-row{flex-wrap:wrap;}
       .mode-row{grid-template-columns:1fr 1fr 1fr;}
     }
@@ -315,13 +339,14 @@
       back:'Back',clear_history:'Clear',
       q_label:'Question',progress:'Progress',submit:'Submit',timer_label:'Time',
       correct_msg:'✓ Correct!',result_label:'Game over',your_score:'Your score',
-      correct:'Correct',grade_label:'Grade',accuracy:'Accuracy',missed:'Missed',
-      streak:'Streak',best_streak:'Best streak',
+      correct:'Correct',missed:'Missed',grade_label:'Grade',accuracy:'Accuracy',
+      streak:'Streak',best_streak:'Best streak',all_time_best:'All-time best streak',
       err_range:'Enter a number between 1 and 20',err_num:'Please enter a number',
-      hint:'or press',history_title:'Game History',history_empty:'No games played yet.',
+      hint:'or press',skip_hint:'Press Escape to skip',
+      history_title:'Game History',history_empty:'No games played yet.',
       grade_perfect:'Perfect! 🏆',grade_excellent:'Excellent! 🔥',grade_amazing:"You're Amazing! 🌟",
       grade_keep:'Keep Going 👍',grade_harder:'Try Harder 💪',grade_lose:'You Lose 😢',
-      wrong_prefix:'✗ Answer was'
+      wrong_prefix:'✗ Answer was',time_bonus:'+bonus',skipped:'↷ Skipped'
     },
     fr:{
       logo1:'Teste ton',logo2:'Cerveau',
@@ -333,13 +358,14 @@
       back:'Retour',clear_history:'Effacer',
       q_label:'Question',progress:'Progression',submit:'Valider',timer_label:'Temps',
       correct_msg:'✓ Correct !',result_label:'Fin de partie',your_score:'Votre score',
-      correct:'Correct',grade_label:'Note',accuracy:'Précision',missed:'Manqué',
-      streak:'Série',best_streak:'Meilleure série',
+      correct:'Correct',missed:'Manqué',grade_label:'Note',accuracy:'Précision',
+      streak:'Série',best_streak:'Meilleure série',all_time_best:'Meilleure série all-time',
       err_range:'Entrez un nombre entre 1 et 20',err_num:'Veuillez entrer un nombre',
-      hint:'ou appuyez sur',history_title:'Historique des parties',history_empty:'Aucune partie jouée.',
+      hint:'ou appuyez sur',skip_hint:'Appuyez sur Échap pour passer',
+      history_title:'Historique des parties',history_empty:'Aucune partie jouée.',
       grade_perfect:'Parfait ! 🏆',grade_excellent:'Excellent ! 🔥',grade_amazing:'Incroyable ! 🌟',
       grade_keep:'Continue ! 👍',grade_harder:'Encore effort ! 💪',grade_lose:'Perdu 😢',
-      wrong_prefix:'✗ Réponse :'
+      wrong_prefix:'✗ Réponse :',time_bonus:'+bonus',skipped:'↷ Passé'
     },
     ar:{
       logo1:'تحدَّ',logo2:'عقلك',
@@ -351,28 +377,64 @@
       back:'رجوع',clear_history:'مسح',
       q_label:'سؤال',progress:'التقدم',submit:'إرسال',timer_label:'الوقت',
       correct_msg:'✓ صحيح!',result_label:'انتهت اللعبة',your_score:'نتيجتك',
-      correct:'صحيح',grade_label:'الدرجة',accuracy:'الدقة',missed:'أخطأت',
-      streak:'تسلسل',best_streak:'أفضل تسلسل',
+      correct:'صحيح',missed:'أخطأت',grade_label:'الدرجة',accuracy:'الدقة',
+      streak:'تسلسل',best_streak:'أفضل تسلسل',all_time_best:'أفضل تسلسل على الإطلاق',
       err_range:'أدخل رقماً بين 1 و 20',err_num:'يرجى إدخال رقم',
-      hint:'أو اضغط',history_title:'سجل الألعاب',history_empty:'لم تُلعب أي لعبة بعد.',
+      hint:'أو اضغط',skip_hint:'اضغط Escape للتخطي',
+      history_title:'سجل الألعاب',history_empty:'لم تُلعب أي لعبة بعد.',
       grade_perfect:'مثالي! 🏆',grade_excellent:'ممتاز! 🔥',grade_amazing:'رائع! 🌟',
       grade_keep:'واصل! 👍',grade_harder:'حاول أكثر! 💪',grade_lose:'خسرت 😢',
-      wrong_prefix:'✗ الإجابة كانت'
+      wrong_prefix:'✗ الإجابة كانت',time_bonus:'+مكافأة',skipped:'↷ تخطي'
     }
   };
 
   const DIFFICULTY = {
-    easy:  {min:1,max:5, timePerQ:16},
-    medium:{min:1,max:10,timePerQ:12},
-    hard:  {min:6,max:12,timePerQ:8}
+    easy:  {min:1, max:5,  timePerQ:16, bonusThreshold:0.6},
+    medium:{min:1, max:10, timePerQ:12, bonusThreshold:0.5},
+    hard:  {min:6, max:12, timePerQ:8,  bonusThreshold:0.4}
   };
+
+  const MODE_LABELS = {mult:'×', div:'÷', add:'+', sub:'−', random:'?'};
 
   /* ── State ── */
   let lang          = detectLang();
   let currentTheme  = detectTheme();
   let currentScreen = null;
-  let selectedDiff  = 'medium';
-  let selectedMode  = 'random';
+  let selectedDiff  = loadPref('quiz-diff','medium');
+  let selectedMode  = loadPref('quiz-mode','random');
+
+  /* ── Audio ── */
+  let audioCtx = null;
+  function getAudioCtx(){
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function playTone(freq, type, duration, gain=0.18){
+    try{
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gn  = ctx.createGain();
+      osc.connect(gn); gn.connect(ctx.destination);
+      osc.type = type; osc.frequency.value = freq;
+      gn.gain.setValueAtTime(gain, ctx.currentTime);
+      gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + duration);
+    }catch(e){}
+  }
+  function soundCorrect(){
+    playTone(523.25,'sine',0.12,0.14);
+    setTimeout(()=>playTone(783.99,'sine',0.15,0.12),80);
+  }
+  function soundWrong(){
+    playTone(220,'sawtooth',0.18,0.12);
+  }
+  function soundTimeout(){
+    playTone(180,'sine',0.22,0.10);
+  }
+  function soundSkip(){
+    playTone(330,'sine',0.10,0.08);
+  }
 
   /* ── Theme ── */
   function detectTheme(){
@@ -402,12 +464,20 @@
   }
   const t = ()=>T[lang];
 
+  /* ── Prefs ── */
+  function loadPref(key,def){ return localStorage.getItem(key)||def; }
+  function savePref(key,val){ localStorage.setItem(key,val); }
+
   /* ── History ── */
   const HK='quiz-history';
   function loadHistory(){ try{return JSON.parse(localStorage.getItem(HK)||'[]');}catch{return[];} }
   function saveHistory(h){ try{localStorage.setItem(HK,JSON.stringify(h));}catch{} }
   function addHistory(e){ const h=loadHistory(); h.unshift(e); if(h.length>50)h.splice(50); saveHistory(h); }
   function clearHistory(){ saveHistory([]); }
+  function allTimeBestStreak(){
+    const h=loadHistory();
+    return h.reduce((best,g)=>Math.max(best,g.bestStreak||0),0);
+  }
 
   /* ── Particles ── */
   const canvas=document.getElementById('canvas');
@@ -472,11 +542,15 @@
     })(start);
   }
 
-  function genQuestion(mode,diff){
-    const {min,max}=DIFFICULTY[diff];
-    // If random, pick one of the four operations at random each question
+  /* ── Question generation — split into two clean functions ── */
+  function pickOperation(mode){
+    if(mode!=='random') return mode;
     const ops=['mult','div','add','sub'];
-    const op=mode==='random'?ops[Math.floor(Math.random()*ops.length)]:mode;
+    return ops[Math.floor(Math.random()*ops.length)];
+  }
+
+  function buildQuestion(op, diff){
+    const {min,max}=DIFFICULTY[diff];
     let a=Math.floor(Math.random()*(max-min+1))+min;
     let b=Math.floor(Math.random()*(max-min+1))+min;
     let answer,display;
@@ -484,17 +558,27 @@
     else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
     else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
     else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
-    return{display,answer};
+    return{display,answer,op};
+  }
+
+  function genQuestion(mode,diff){
+    return buildQuestion(pickOperation(mode),diff);
   }
 
   /* ── SETUP ── */
   function showSetup(){
     currentScreen=showSetup;
+    const best=allTimeBestStreak();
     render(`
       ${topBar('badge_quiz')}
       <div class="q-label"><span class="q-label-left">${t().new_game}</span></div>
       <div class="q-text">${t().how_many.replace('?','<em>?</em>')}</div>
       <p class="q-sub">${t().choose}</p>
+
+      ${best>0?`<div class="best-streak-banner">
+        <span>${t().all_time_best}</span>
+        <strong>🔥 ${best}</strong>
+      </div>`:''}
 
       <div class="section-label">${t().difficulty}</div>
       <div class="diff-row" role="group" aria-label="${t().difficulty}">
@@ -525,12 +609,14 @@
     document.querySelectorAll('.diff-btn').forEach(b=>{
       b.addEventListener('click',()=>{
         selectedDiff=b.dataset.diff;
+        savePref('quiz-diff',selectedDiff);
         document.querySelectorAll('.diff-btn').forEach(x=>x.classList.toggle('active',x===b));
       });
     });
     document.querySelectorAll('.mode-btn').forEach(b=>{
       b.addEventListener('click',()=>{
         selectedMode=b.dataset.mode;
+        savePref('quiz-mode',selectedMode);
         document.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('active',x===b));
       });
     });
@@ -555,40 +641,104 @@
   function startGame(total,diff,mode){
     const questions=Array.from({length:total},()=>genQuestion(mode,diff));
     const timePerQ=DIFFICULTY[diff].timePerQ;
-    let current=0,score=0,streak=0,bestStreak=0;
+    const bonusThreshold=DIFFICULTY[diff].bonusThreshold;
+    let current=0,score=0,bonusScore=0,streak=0,bestStreak=0,skipped=0;
     let timerInterval=null,timeLeft=timePerQ,answered=false;
+    let escListener=null;
 
     function clearTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+    function removeEscListener(){ if(escListener){document.removeEventListener('keydown',escListener);escListener=null;} }
 
-    function advance(){ clearTimer(); current++; setTimeout(showQuestion,200); }
+    function lockInput(){
+      const inp=document.getElementById('inp');
+      const go=document.getElementById('go');
+      if(inp){ inp.disabled=true; }
+      if(go) { go.disabled=true; }
+    }
+
+    function refocusInput(){
+      // After re-enabling, explicitly refocus
+      requestAnimationFrame(()=>{
+        const inp=document.getElementById('inp');
+        if(inp && !inp.disabled) inp.focus();
+      });
+    }
+
+    function advance(){ clearTimer(); removeEscListener(); current++; setTimeout(showQuestion,200); }
+
+    function timeoutQuestion(){
+      if(answered) return;
+      answered=true;
+      clearTimer(); removeEscListener();
+      lockInput();
+      streak=0;
+      soundTimeout();
+      const fb=document.getElementById('fb');
+      const card=document.querySelector('.card');
+      const inp=document.getElementById('inp');
+      const sb=document.getElementById('sb');
+      if(fb){ fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
+      if(inp){ inp.classList.add('wrong'); }
+      if(card){ card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400); }
+      if(sb) sb.textContent='🔥 0';
+      setTimeout(advance, 1200);
+    }
+
+    function skipQuestion(){
+      if(answered) return;
+      answered=true;
+      clearTimer(); removeEscListener();
+      lockInput();
+      skipped++;
+      streak=0;
+      soundSkip();
+      const fb=document.getElementById('fb');
+      const inp=document.getElementById('inp');
+      const sb=document.getElementById('sb');
+      if(fb){ fb.textContent=t().skipped; fb.className='feedback err'; }
+      if(inp){ inp.classList.add('wrong'); }
+      if(sb) sb.textContent='🔥 0';
+      setTimeout(advance, 800);
+    }
 
     function doAnswer(v){
       if(answered) return;
       answered=true;
-      clearTimer();
-      const inp=document.getElementById('inp');
+      clearTimer(); removeEscListener();
+      lockInput();
+
       const fb=document.getElementById('fb');
-      const go=document.getElementById('go');
       const card=document.querySelector('.card');
-      if(inp) inp.disabled=true;
-      if(go)  go.disabled=true;
+      const inp=document.getElementById('inp');
+      const sb=document.getElementById('sb');
 
       if(v===questions[current].answer){
-        score++;streak++;if(streak>bestStreak)bestStreak=streak;
+        score++;
+        streak++;
+        if(streak>bestStreak) bestStreak=streak;
+
+        // Time bonus: reward fast answers
+        const timeRatio=timeLeft/timePerQ;
+        let bonusHtml='';
+        if(timeRatio>=bonusThreshold){
+          bonusScore++;
+          bonusHtml=`<span class="time-bonus">${t().time_bonus}</span>`;
+        }
+
         if(inp) inp.classList.add('correct');
-        if(fb){fb.textContent=t().correct_msg;fb.className='feedback ok';}
-        if(card){card.classList.add('flash-ok');setTimeout(()=>card.classList.remove('flash-ok'),500);}
-        const sb=document.getElementById('sb');
-        if(sb){sb.textContent='🔥 '+streak;sb.classList.remove('pop');void sb.offsetWidth;sb.classList.add('pop');}
+        if(fb){ fb.innerHTML=`${t().correct_msg}${bonusHtml}`; fb.className='feedback ok'; }
+        if(card){ card.classList.add('flash-ok'); setTimeout(()=>card.classList.remove('flash-ok'),500); }
+        if(sb){ sb.textContent='🔥 '+streak; sb.classList.remove('pop'); void sb.offsetWidth; sb.classList.add('pop'); }
+        soundCorrect();
       } else {
         streak=0;
         if(inp) inp.classList.add('wrong');
-        if(fb){fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`;fb.className='feedback err';}
-        if(card){card.classList.add('shake');setTimeout(()=>card.classList.remove('shake'),400);}
-        const sb=document.getElementById('sb');
+        if(fb){ fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
+        if(card){ card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400); }
         if(sb) sb.textContent='🔥 0';
+        soundWrong();
       }
-      setTimeout(advance,220);
+      setTimeout(advance, 1200);
     }
 
     function startTimer(){
@@ -596,18 +746,24 @@
       timeLeft=timePerQ;
       const fill=document.getElementById('tf');
       const tEl=document.getElementById('tl');
+      const timerTrack=document.getElementById('timer-track');
       if(fill) fill.style.width='100%';
+      if(timerTrack) timerTrack.setAttribute('aria-valuenow','100');
       timerInterval=setInterval(()=>{
         timeLeft=Math.max(0,timeLeft-0.1);
         const pct=(timeLeft/timePerQ)*100;
-        if(fill){fill.style.width=pct+'%';fill.className='timer-fill'+(pct<30?' danger':pct<60?' warn':'');}
+        if(fill){
+          fill.style.width=pct+'%';
+          fill.className='timer-fill'+(pct<30?' danger':pct<60?' warn':'');
+        }
         if(tEl) tEl.textContent=Math.ceil(timeLeft)+'s';
-        if(timeLeft<=0) doAnswer(-Infinity);
+        if(timerTrack) timerTrack.setAttribute('aria-valuenow',Math.round(pct));
+        if(timeLeft<=0) timeoutQuestion();
       },100);
     }
 
     function showQuestion(){
-      if(current>=total){showResult(score,total,bestStreak,diff,mode);return;}
+      if(current>=total){ showResult(score,total,bestStreak,bonusScore,skipped,diff,mode); return; }
       currentScreen=showQuestion;
       answered=false;
       const q=questions[current];
@@ -625,7 +781,10 @@
         </div>
         <div class="timer-wrap">
           <div class="timer-meta"><span>${t().timer_label}</span><span id="tl">${timePerQ}s</span></div>
-          <div class="timer-track"><div class="timer-fill" id="tf" style="width:100%"></div></div>
+          <div class="timer-track" id="timer-track" role="progressbar" aria-label="${t().timer_label}"
+               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+            <div class="timer-fill" id="tf" style="width:100%"></div>
+          </div>
         </div>
         <div class="q-label">
           <span class="q-label-left">${t().q_label} ${current+1} / ${total}</span>
@@ -637,6 +796,7 @@
         </div>
         <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
         <button class="btn" id="go">${t().submit}</button>
+        <p class="skip-hint">${t().skip_hint} <kbd>Esc</kbd></p>
         <p class="hint">${t().hint} <kbd>Enter</kbd></p>
       `);
 
@@ -644,31 +804,38 @@
       inp.focus();
       startTimer();
 
+      // Esc to skip
+      escListener=function(e){ if(e.key==='Escape') skipQuestion(); };
+      document.addEventListener('keydown',escListener);
+
       let sub=false;
       function submit(){
         if(sub) return; sub=true;
         const v=parseInt(inp.value);
         if(isNaN(v)){
           const fb=document.getElementById('fb');
-          if(fb){fb.textContent=t().err_num;fb.className='feedback err';}
-          inp.classList.add('wrong');sub=false;return;
+          if(fb){ fb.textContent=t().err_num; fb.className='feedback err'; }
+          inp.classList.add('wrong');
+          setTimeout(()=>{ inp.classList.remove('wrong'); inp.value=''; inp.focus(); },600);
+          sub=false; return;
         }
         doAnswer(v);
       }
       document.getElementById('go').addEventListener('click',submit);
-      inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+      inp.addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
     }
 
     showQuestion();
   }
 
   /* ── RESULT ── */
-  function showResult(score,total,bestStreak,diff,mode){
-    currentScreen=()=>showResult(score,total,bestStreak,diff,mode);
+  function showResult(score,total,bestStreak,bonusScore,skipped,diff,mode){
+    currentScreen=()=>showResult(score,total,bestStreak,bonusScore,skipped,diff,mode);
+    const missed=total-score;
     const pct=total>0?Math.round((score/total)*100):0;
     const scaled=Math.round((score/total)*20);
     const g=gradeInfo(score,total);
-    addHistory({ts:Date.now(),score,total,scaled,pct,bestStreak,diff,mode,gradeLabel:g.label,gradeCls:g.cls});
+    addHistory({ts:Date.now(),score,total,scaled,pct,bestStreak,bonusScore,skipped,diff,mode,gradeLabel:g.label,gradeCls:g.cls});
 
     render(`
       ${topBar('badge_result')}
@@ -676,9 +843,11 @@
       <div class="q-text">${t().your_score.split(' ').map((w,i,a)=>i===a.length-1?`<em>${w}</em>`:w).join(' ')}</div>
       <div class="score-grid" role="list">
         <div class="score-cell" role="listitem"><div class="score-num" id="sn0">0</div><div class="score-lbl">${t().correct}</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn1">0</div><div class="score-lbl">${t().grade_label} /20</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn2">0</div><div class="score-lbl">${t().accuracy} %</div></div>
-        <div class="score-cell" role="listitem"><div class="score-num" id="sn3">0</div><div class="score-lbl">${t().best_streak} 🔥</div></div>
+        <div class="score-cell" role="listitem"><div class="score-num" id="sn1">0</div><div class="score-lbl">${t().missed}</div></div>
+        <div class="score-cell" role="listitem"><div class="score-num" id="sn2">0</div><div class="score-lbl">${t().grade_label} /20</div></div>
+        <div class="score-cell" role="listitem"><div class="score-num" id="sn3">0</div><div class="score-lbl">${t().accuracy} %</div></div>
+        <div class="score-cell" role="listitem"><div class="score-num" id="sn4">0</div><div class="score-lbl">${t().best_streak} 🔥</div></div>
+        <div class="score-cell" role="listitem"><div class="score-num" id="sn5">0</div><div class="score-lbl">${t().time_bonus} ⚡</div></div>
       </div>
       <div class="grade-tag ${g.cls}" role="status">${g.label}</div>
       <div class="divider"></div>
@@ -687,7 +856,7 @@
       <button class="btn btn-ghost" id="hist">${t().view_history}</button>
     `);
 
-    [score,scaled,pct,bestStreak].forEach((v,i)=>{
+    [score, missed, scaled, pct, bestStreak, bonusScore].forEach((v,i)=>{
       const el=document.getElementById('sn'+i);
       if(el) setTimeout(()=>animateCount(el,v,700),i*90);
     });
@@ -706,13 +875,25 @@
       rows=`<p class="history-empty">${t().history_empty}</p>`;
     } else {
       rows=`<div class="history-list" role="list">`+
-        history.map(h=>`
+        history.map(h=>{
+          const diffLabel = h.diff ? T[lang][h.diff]||h.diff : '';
+          const modeLabel = h.mode ? (MODE_LABELS[h.mode]||h.mode) : '';
+          return `
           <div class="history-row" role="listitem">
-            <span class="history-date">${formatDate(h.ts)}</span>
-            <span class="history-score">${h.score}/${h.total} · ${h.pct}%</span>
-            <span class="history-grade grade-tag ${h.gradeCls}" style="margin-bottom:0">${h.gradeLabel}</span>
+            <div>
+              <div class="history-row-top">
+                <span class="history-score">${h.score}/${h.total} · ${h.pct}%</span>
+                <span class="history-grade grade-tag ${h.gradeCls}" style="margin-bottom:0">${h.gradeLabel}</span>
+              </div>
+              <div class="history-row-bottom">
+                <span class="history-date">${formatDate(h.ts)}</span>
+                ${diffLabel?`<span class="history-meta-tag">${diffLabel}</span>`:''}
+                ${modeLabel?`<span class="history-meta-tag">${modeLabel}</span>`:''}
+                ${(h.bestStreak||0)>0?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}
+              </div>
+            </div>
           </div>
-        `).join('')+`</div>`;
+        `}).join('')+`</div>`;
     }
     render(`
       ${topBar('badge_history')}
