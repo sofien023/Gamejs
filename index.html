@@ -439,7 +439,7 @@
       grade_perfect:'Perfect! 🏆',grade_excellent:'Excellent! 🔥',grade_amazing:"You're Amazing! 🌟",
       grade_keep:'Keep Going 👍',grade_harder:'Try Harder 💪',grade_lose:'You Lose 😢',
       wrong_prefix:'✗ Answer was',time_bonus:'+bonus',skipped:'↷ Skipped',
-      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress',
+      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress', dash_avg_rush:'Avg Survived',
       rush_desc:'One mistake and it\'s over. How far can you go?',
       rush_info:'⚡ One wrong answer ends the game immediately',
       rush_survived:'Questions survived',rush_record:'Rush record',
@@ -468,7 +468,7 @@
       grade_perfect:'Parfait ! 🏆',grade_excellent:'Excellent ! 🔥',grade_amazing:'Incroyable ! 🌟',
       grade_keep:'Continue ! 👍',grade_harder:'Encore effort ! 💪',grade_lose:'Perdu 😢',
       wrong_prefix:'✗ Réponse :',time_bonus:'+bonus',skipped:'↷ Passé',
-      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression',
+      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression', dash_avg_rush:'Moy Survécus',
       rush_desc:'Une erreur et c\'est fini. Jusqu\'où irez-vous ?',
       rush_info:'⚡ Une mauvaise réponse met fin au jeu immédiatement',
       rush_survived:'Questions survécues',rush_record:'Record Rush',
@@ -497,7 +497,7 @@
       grade_perfect:'مثالي! 🏆',grade_excellent:'ممتاز! 🔥',grade_amazing:'رائع! 🌟',
       grade_keep:'واصل! 👍',grade_harder:'حاول أكثر! 💪',grade_lose:'خسرت 😢',
       wrong_prefix:'✗ الإجابة كانت',time_bonus:'+مكافأة',skipped:'↷ تخطي',
-      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك',
+      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك', dash_avg_rush:'متوسط النجاة',
       rush_desc:'خطأ واحد وانتهى الأمر. حتى متى ستصمد؟',
       rush_info:'⚡ إجابة خاطئة واحدة تنهي اللعبة فوراً',
       rush_survived:'الأسئلة الناجحة',rush_record:'رقم الاندفاع',
@@ -608,6 +608,14 @@
     };
   }
 
+  function getRushStats() {
+    const h = loadHistory().filter(g => g.isRush);
+    if (h.length === 0) return { best: 0, avg: 0, games: 0 };
+    const best = h.reduce((m, g) => Math.max(m, g.score), 0);
+    const avg  = Math.round(h.reduce((s, g) => s + g.score, 0) / h.length);
+    return { best, avg, games: h.length };
+  }
+
   /* ── Canvas Background ── */
   const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
   let pts=[],w,h;
@@ -700,7 +708,7 @@
     currentScreen = showDashboard;
     const stats = getGlobalStats();
     const best = allTimeBestStreak();
-    const rr = rushRecord();
+    const rr = getRushStats();
 
     if (stats.games === 0 && loadHistory().filter(h=>h.isRush).length === 0) {
       // First time: show dashboard with just the two action buttons, skip stats
@@ -713,9 +721,11 @@
         <div class="stat-box"><div class="stat-num" id="ds0">0</div><div class="stat-lbl">${t().dash_total}</div></div>
         <div class="stat-box"><div class="stat-num" id="ds1">0</div><div class="stat-lbl">${t().dash_avg}</div></div>
         <div class="stat-box"><div class="stat-num" id="ds2">0</div><div class="stat-lbl">${t().dash_games}</div></div>
+        <div class="stat-box"><div class="stat-num" id="ds3">0</div><div class="stat-lbl">${t().rush_record} ⚡</div></div>
+        <div class="stat-box"><div class="stat-num" id="ds4">0</div><div class="stat-lbl">${t().dash_avg_rush}</div></div>
+        <div class="stat-box"><div class="stat-num" id="ds5">0</div><div class="stat-lbl">${t().badge_rush} 🎮</div></div>
       </div>
       ${best>0?`<div class="best-streak-banner"><span>${t().all_time_best}</span><strong>🔥 ${best}</strong></div>`:''}
-      ${rr>0?`<div class="rush-info" style="margin-bottom:1.5rem"><span>${t().rush_record}</span><strong style="margin-left:auto;font-family:'Fraunces',serif;font-size:1rem;font-weight:300">⚡ ${rr}</strong></div>`:''}
       <div class="divider"></div>
       <div class="dash-actions">
         <button class="btn" id="newGame">${t().new_game}</button>
@@ -727,6 +737,9 @@
     [stats.total, stats.avg, stats.games].forEach((v, i) => {
       animateCount(document.getElementById('ds' + i), v, 800);
     });
+    animateCount(document.getElementById('ds3'), rr.best, 800);
+    animateCount(document.getElementById('ds4'), rr.avg, 800);
+    animateCount(document.getElementById('ds5'), rr.games, 800);
 
     document.getElementById('newGame').addEventListener('click', showSetup);
     document.getElementById('newRush').addEventListener('click', showRushSetup);
