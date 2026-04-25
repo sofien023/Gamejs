@@ -18,6 +18,7 @@
       --grid-color:rgba(0,229,180,0.025);--input-bg:#1a2235;
       --toggle-track:rgba(0,229,180,0.15);
       --timer-ok:#00e5b4;--timer-warn:#fbbf24;--timer-danger:#f87171;
+      --rush:#ff6b35;--rush-dim:rgba(255,107,53,0.12);--rush-border:rgba(255,107,53,0.25);
     }
     [data-theme="light"]{
       --bg:#f0f4f8;--bg2:#e2e8f0;--bg3:#ffffff;
@@ -29,6 +30,7 @@
       --grid-color:rgba(0,153,168,0.04);--input-bg:#f8fafc;
       --toggle-track:rgba(0,153,168,0.15);
       --timer-ok:#0099a8;--timer-warn:#d97706;--timer-danger:#dc2626;
+      --rush:#e8530a;--rush-dim:rgba(232,83,10,0.08);--rush-border:rgba(232,83,10,0.2);
     }
 
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -96,6 +98,15 @@
     .card.anim-in{animation:fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
 
+    /* ── Rush card glow ── */
+    .card.rush-mode{
+      border-color:var(--rush-border);
+      box-shadow:0 0 0 1px var(--rush-border),0 24px 64px rgba(0,0,0,0.5),0 0 40px rgba(255,107,53,0.08);
+    }
+    [data-theme="light"] .card.rush-mode{
+      box-shadow:0 0 0 1px var(--rush-border),0 24px 64px rgba(0,0,0,0.1),0 0 30px rgba(232,83,10,0.06);
+    }
+
     @keyframes shake{
       0%,100%{transform:translateX(0);}
       15%{transform:translateX(-6px);}30%{transform:translateX(6px);}
@@ -117,6 +128,13 @@
     }
     .flash-ok{animation:flashOk 0.5s ease both;}
 
+    @keyframes flashDead{
+      0%,100%{box-shadow:var(--shadow);}
+      30%{box-shadow:0 0 0 4px rgba(248,113,113,0.5),var(--shadow);}
+      60%{box-shadow:0 0 0 2px rgba(248,113,113,0.3),var(--shadow);}
+    }
+    .flash-dead{animation:flashDead 0.5s ease both;}
+
     /* ── Card top ── */
     .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
     .logo-text{font-family:'Fraunces',serif;font-size:0.95rem;font-weight:300;color:var(--text);}
@@ -126,9 +144,11 @@
       letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);
       padding:3px 10px;border:1px solid rgba(0,229,180,0.2);border-radius:2px;
     }
+    .badge.badge-rush{color:var(--rush);border-color:var(--rush-border);}
     [data-theme="light"] .badge{border-color:rgba(0,153,168,0.25);}
     body.ar .badge{letter-spacing:0;font-size:0.72rem;}
     .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 1.8s ease-in-out infinite;}
+    .badge-dot.rush{background:var(--rush);}
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.7);}}
 
     /* ── Section label ── */
@@ -148,6 +168,29 @@
     .diff-btn:hover,.mode-btn:hover{border-color:var(--accent);color:var(--accent);}
     .diff-btn.active,.mode-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
 
+    /* ── Dashboard action row ── */
+    .dash-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .dash-actions .btn{margin-top:0;}
+    .dash-actions .btn-rush{margin-top:0;}
+
+    /* ── Rush action buttons on setup ── */
+    .btn-rush{
+      width:100%;padding:0.8rem 1.6rem;
+      font-family:'DM Mono',monospace;font-size:0.82rem;letter-spacing:0.08em;
+      text-transform:uppercase;
+      background:var(--rush-dim);color:var(--rush);
+      border:1px solid var(--rush-border);border-radius:2px;cursor:pointer;
+      transition:filter 0.2s,transform 0.1s,background 0.2s;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    body.ar .btn-rush{font-family:'Cairo',sans-serif;letter-spacing:0;}
+    .btn-rush:hover:not(:disabled){background:rgba(255,107,53,0.18);filter:brightness(1.05);}
+    .btn-rush:active:not(:disabled){transform:scale(0.98);}
+    .rush-badge-inline{
+      font-size:0.6rem;padding:1px 6px;border-radius:2px;
+      background:var(--rush);color:#fff;letter-spacing:0.1em;text-transform:uppercase;
+    }
+
     /* ── Best streak on setup ── */
     .best-streak-banner{
       display:flex;align-items:center;justify-content:space-between;
@@ -156,6 +199,24 @@
     }
     [data-theme="light"] .best-streak-banner{background:rgba(0,153,168,0.05);border-color:rgba(0,153,168,0.15);}
     .best-streak-banner strong{color:var(--accent);font-size:1rem;font-family:'Fraunces',serif;font-weight:300;}
+
+    /* ── Rush lives display ── */
+    .lives-display{
+      display:flex;align-items:center;gap:6px;
+      background:var(--rush-dim);border:1px solid var(--rush-border);
+      border-radius:3px;padding:0.45rem 0.8rem;margin-bottom:1.2rem;
+      font-size:0.72rem;color:var(--rush);
+    }
+    .lives-display .life-icon{font-size:1rem;transition:transform 0.2s,opacity 0.3s;}
+    .lives-display .life-icon.lost{opacity:0.2;transform:scale(0.8);}
+
+    /* ── Rush "one mistake = dead" banner ── */
+    .rush-info{
+      display:flex;align-items:center;gap:8px;
+      background:var(--rush-dim);border:1px solid var(--rush-border);
+      border-radius:3px;padding:0.55rem 0.9rem;margin-bottom:1.2rem;
+      font-size:0.7rem;color:var(--rush);
+    }
 
     /* ── Dashboard Grid ── */
     .dashboard-stats{
@@ -177,12 +238,13 @@
     body.ar .progress-meta{letter-spacing:0;}
     .progress-track{height:2px;background:var(--border);border-radius:1px;overflow:hidden;}
     .progress-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.4s ease;}
+    .progress-fill.rush-fill{background:var(--rush);}
 
     /* ── Timer ── */
     .timer-wrap{margin-bottom:1.2rem;}
     .timer-meta{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);margin-bottom:4px;}
     .timer-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
-    .timer-fill{height:100%;border-radius:2px;transition:width:0.1s linear,background 0.3s;background:var(--timer-ok);}
+    .timer-fill{height:100%;border-radius:2px;transition:width 0.1s linear,background 0.3s;background:var(--timer-ok);}
     .timer-fill.warn{background:var(--timer-warn);}
     .timer-fill.danger{background:var(--timer-danger);}
 
@@ -200,6 +262,7 @@
       background:rgba(0,229,180,0.08);border:1px solid rgba(0,229,180,0.15);
       border-radius:2px;padding:1px 7px;font-size:0.68rem;color:var(--accent);
     }
+    .streak-badge.rush-streak{background:var(--rush-dim);border-color:var(--rush-border);color:var(--rush);}
     [data-theme="light"] .streak-badge{background:rgba(0,153,168,0.07);border-color:rgba(0,153,168,0.2);}
     @keyframes streakPop{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
     .streak-badge.pop{animation:streakPop 0.3s cubic-bezier(0.34,1.56,0.64,1);}
@@ -210,8 +273,10 @@
       color:var(--accent);margin-bottom:0.8rem;
       display:flex;align-items:center;justify-content:space-between;gap:8px;
     }
+    .q-label.rush-label{color:var(--rush);}
     .q-label-left{display:flex;align-items:center;gap:8px;}
     .q-label-left::before{content:'';display:inline-block;width:20px;height:1px;background:var(--accent);}
+    .rush-label .q-label-left::before{background:var(--rush);}
     body.ar .q-label{letter-spacing:0;}
     .q-text{
       font-family:'Fraunces',serif;font-size:clamp(2.2rem,8vw,3.8rem);
@@ -219,6 +284,7 @@
     }
     body.ar .q-text{font-family:'Cairo',sans-serif;letter-spacing:0;}
     .q-text em{font-style:italic;color:var(--accent);}
+    .q-text em.rush-em{color:var(--rush);}
     .q-sub{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:2rem;}
 
     /* ── Input / buttons ── */
@@ -233,6 +299,7 @@
     .input::-webkit-outer-spin-button,.input::-webkit-inner-spin-button{-webkit-appearance:none;}
     .input::placeholder{color:var(--muted);}
     .input:focus{border-color:rgba(0,229,180,0.4);}
+    .input:focus.rush-input{border-color:rgba(255,107,53,0.4);}
     [data-theme="light"] .input:focus{border-color:rgba(0,153,168,0.5);}
     .input.correct{border-color:var(--success);}
     .input.wrong{border-color:var(--danger);}
@@ -270,8 +337,18 @@
     }
     .score-cell{background:var(--bg3);padding:1.2rem 1rem;text-align:center;transition:background 0.35s;}
     .score-num{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--accent);line-height:1;}
+    .score-num.rush-num{color:var(--rush);}
     .score-lbl{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
     body.ar .score-lbl{letter-spacing:0;}
+
+    /* ── Rush "killed at" big display ── */
+    .rush-killed{
+      text-align:center;margin-bottom:1.5rem;
+      background:var(--rush-dim);border:1px solid var(--rush-border);
+      border-radius:4px;padding:1.4rem 1rem;
+    }
+    .rush-killed-num{font-family:'Fraunces',serif;font-size:3.5rem;color:var(--rush);line-height:1;}
+    .rush-killed-lbl{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
 
     .grade-tag{display:inline-block;font-size:0.75rem;letter-spacing:0.08em;padding:6px 14px;border-radius:2px;margin-bottom:1.8rem;text-transform:uppercase;}
     body.ar .grade-tag{letter-spacing:0;}
@@ -282,6 +359,7 @@
     .grade-good{background:rgba(250,204,21,0.1);color:#fde68a;border:1px solid rgba(250,204,21,0.25);}
     [data-theme="light"] .grade-good{color:#92400e;background:rgba(250,204,21,0.15);}
     .grade-fail{background:rgba(248,113,113,0.1);color:var(--danger);border:1px solid rgba(248,113,113,0.25);}
+    .grade-rush{background:var(--rush-dim);color:var(--rush);border:1px solid var(--rush-border);}
 
     .divider{height:1px;background:var(--border);margin:1.5rem 0;transition:background 0.35s;}
     .hint{font-size:0.72rem;color:var(--muted);text-align:center;margin-top:1rem;}
@@ -301,12 +379,15 @@
     .history-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
     .history-row{background:var(--bg3);padding:0.7rem 1rem;display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:center;font-size:0.78rem;transition:background 0.15s;}
     .history-row:hover{background:var(--bg2);}
+    .history-row.rush-row{border-left:2px solid var(--rush);}
     .history-row-top{display:flex;justify-content:space-between;align-items:center;gap:0.5rem;}
     .history-row-bottom{display:flex;align-items:center;gap:0.5rem;margin-top:2px;}
     .history-date{color:var(--muted);font-size:0.66rem;}
     .history-score{color:var(--accent);font-weight:500;white-space:nowrap;font-size:0.8rem;}
+    .history-score.rush-score{color:var(--rush);}
     .history-grade{font-size:0.62rem;padding:2px 7px;border-radius:2px;white-space:nowrap;}
     .history-meta-tag{font-size:0.6rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:0.05em;}
+    .history-meta-tag.rush-tag{color:var(--rush);border-color:var(--rush-border);background:var(--rush-dim);}
 
     @media(max-width:500px){
       .card{padding:1.8rem 1.5rem;}
@@ -341,10 +422,12 @@
     en:{
       logo1:'Test your',logo2:'Brain',
       badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',badge_dashboard:'Dashboard',
-      new_game:'New game',how_many:'How many questions?',choose:'Choose between 1 and 20',
+      badge_rush:'Rush Mode',badge_rush_game:'Rush — Live',badge_rush_result:'Rush Over',
+      new_game:'New game',rush_game:'Rush game',how_many:'How many questions?',choose:'Choose between 1 and 20',
       difficulty:'Difficulty',easy:'Easy',medium:'Medium',hard:'Hard',
       mode:'Operation',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Random',
-      start:'Start Game',play_again:'Play Again',change_q:'Change Settings',view_history:'View History',
+      start:'Start Game',start_rush:'Start Rush',play_again:'Play Again',play_rush_again:'Rush Again',
+      change_q:'Change Settings',view_history:'View History',
       back:'Back',clear_history:'Clear',
       q_label:'Question',progress:'Progress',submit:'Submit',timer_label:'Time',
       correct_msg:'✓ Correct!',result_label:'Game over',your_score:'Your score',
@@ -356,15 +439,24 @@
       grade_perfect:'Perfect! 🏆',grade_excellent:'Excellent! 🔥',grade_amazing:"You're Amazing! 🌟",
       grade_keep:'Keep Going 👍',grade_harder:'Try Harder 💪',grade_lose:'You Lose 😢',
       wrong_prefix:'✗ Answer was',time_bonus:'+bonus',skipped:'↷ Skipped',
-      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress'
+      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress',
+      rush_desc:'One mistake and it\'s over. How far can you go?',
+      rush_info:'⚡ One wrong answer ends the game immediately',
+      rush_survived:'Questions survived',rush_record:'Rush record',
+      rush_killed_at:'Died at Q',rush_result_label:'Rush — Game Over',
+      rush_your_score:'You survived',rush_grade_0:'First blood 💀',rush_grade_5:'Getting there 🙂',
+      rush_grade_10:'Solid run 👊',rush_grade_15:'Impressive! 🔥',rush_grade_20:'Unstoppable! 🏆',
+      rush_timeout:'⏱ Time ran out!'
     },
     fr:{
       logo1:'Teste ton',logo2:'Cerveau',
       badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',badge_dashboard:'Tableau',
-      new_game:'Nouveau jeu',how_many:'Combien de questions ?',choose:'Choisir entre 1 et 20',
+      badge_rush:'Mode Rush',badge_rush_game:'Rush — Live',badge_rush_result:'Rush Terminé',
+      new_game:'Nouveau jeu',rush_game:'Jeu Rush',how_many:'Combien de questions ?',choose:'Choisir entre 1 et 20',
       difficulty:'Difficulté',easy:'Facile',medium:'Moyen',hard:'Difficile',
       mode:'Opération',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Aléatoire',
-      start:'Commencer',play_again:'Rejouer',change_q:'Paramètres',view_history:"Voir l'historique",
+      start:'Commencer',start_rush:'Commencer Rush',play_again:'Rejouer',play_rush_again:'Rejouer Rush',
+      change_q:'Paramètres',view_history:"Voir l'historique",
       back:'Retour',clear_history:'Effacer',
       q_label:'Question',progress:'Progression',submit:'Valider',timer_label:'Temps',
       correct_msg:'✓ Correct !',result_label:'Fin de partie',your_score:'Votre score',
@@ -376,15 +468,24 @@
       grade_perfect:'Parfait ! 🏆',grade_excellent:'Excellent ! 🔥',grade_amazing:'Incroyable ! 🌟',
       grade_keep:'Continue ! 👍',grade_harder:'Encore effort ! 💪',grade_lose:'Perdu 😢',
       wrong_prefix:'✗ Réponse :',time_bonus:'+bonus',skipped:'↷ Passé',
-      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression'
+      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression',
+      rush_desc:'Une erreur et c\'est fini. Jusqu\'où irez-vous ?',
+      rush_info:'⚡ Une mauvaise réponse met fin au jeu immédiatement',
+      rush_survived:'Questions survécues',rush_record:'Record Rush',
+      rush_killed_at:'Mort à Q',rush_result_label:'Rush — Partie terminée',
+      rush_your_score:'Vous avez survécu à',rush_grade_0:'Premier sang 💀',rush_grade_5:'Pas mal 🙂',
+      rush_grade_10:'Solide 👊',rush_grade_15:'Impressionnant ! 🔥',rush_grade_20:'Inarrêtable ! 🏆',
+      rush_timeout:'⏱ Temps écoulé !'
     },
     ar:{
       logo1:'تحدَّ',logo2:'عقلك',
       badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',badge_dashboard:'لوحة التحكم',
-      new_game:'لعبة جديدة',how_many:'كم سؤالاً تريد؟',choose:'اختر بين 1 و 20',
+      badge_rush:'وضع الاندفاع',badge_rush_game:'اندفاع — مباشر',badge_rush_result:'انتهى الاندفاع',
+      new_game:'لعبة جديدة',rush_game:'لعبة الاندفاع',how_many:'كم سؤالاً تريد؟',choose:'اختر بين 1 و 20',
       difficulty:'الصعوبة',easy:'سهل',medium:'متوسط',hard:'صعب',
       mode:'العملية',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'عشوائي',
-      start:'ابدأ اللعبة',play_again:'العب مجدداً',change_q:'الإعدادات',view_history:'عرض السجل',
+      start:'ابدأ اللعبة',start_rush:'ابدأ الاندفاع',play_again:'العب مجدداً',play_rush_again:'اندفع مجدداً',
+      change_q:'الإعدادات',view_history:'عرض السجل',
       back:'رجوع',clear_history:'مسح',
       q_label:'سؤال',progress:'التقدم',submit:'إرسال',timer_label:'الوقت',
       correct_msg:'✓ صحيح!',result_label:'انتهت اللعبة',your_score:'نتيجتك',
@@ -396,7 +497,14 @@
       grade_perfect:'مثالي! 🏆',grade_excellent:'ممتاز! 🔥',grade_amazing:'رائع! 🌟',
       grade_keep:'واصل! 👍',grade_harder:'حاول أكثر! 💪',grade_lose:'خسرت 😢',
       wrong_prefix:'✗ الإجابة كانت',time_bonus:'+مكافأة',skipped:'↷ تخطي',
-      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك'
+      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك',
+      rush_desc:'خطأ واحد وانتهى الأمر. حتى متى ستصمد؟',
+      rush_info:'⚡ إجابة خاطئة واحدة تنهي اللعبة فوراً',
+      rush_survived:'الأسئلة الناجحة',rush_record:'رقم الاندفاع',
+      rush_killed_at:'توفي في س',rush_result_label:'الاندفاع — انتهت اللعبة',
+      rush_your_score:'نجوت من',rush_grade_0:'الدم الأول 💀',rush_grade_5:'في الطريق 🙂',
+      rush_grade_10:'قوي 👊',rush_grade_15:'رائع! 🔥',rush_grade_20:'لا يُوقف! 🏆',
+      rush_timeout:'⏱ نفد الوقت!'
     }
   };
 
@@ -438,14 +546,13 @@
     playTone(523.25,'sine',0.12,0.14);
     setTimeout(()=>playTone(783.99,'sine',0.15,0.12),80);
   }
-  function soundWrong(){
-    playTone(220,'sawtooth',0.18,0.12);
-  }
-  function soundTimeout(){
-    playTone(180,'sine',0.3,0.15);
-  }
-  function soundSkip(){
-    playTone(350,'triangle',0.1,0.1);
+  function soundWrong(){ playTone(220,'sawtooth',0.18,0.12); }
+  function soundTimeout(){ playTone(180,'sine',0.3,0.15); }
+  function soundSkip(){ playTone(350,'triangle',0.1,0.1); }
+  function soundRushDead(){
+    playTone(200,'sawtooth',0.1,0.2);
+    setTimeout(()=>playTone(150,'sawtooth',0.15,0.25),90);
+    setTimeout(()=>playTone(100,'sine',0.4,0.2),200);
   }
 
   /* ── Core Logic ── */
@@ -469,10 +576,10 @@
   function t(){ return T[lang]; }
 
   function detectTheme(){ return localStorage.getItem('quiz-theme')||'dark'; }
-  function setTheme(t){
-    currentTheme=t;
-    localStorage.setItem('quiz-theme',t);
-    document.documentElement.setAttribute('data-theme',t);
+  function setTheme(th){
+    currentTheme=th;
+    localStorage.setItem('quiz-theme',th);
+    document.documentElement.setAttribute('data-theme',th);
   }
   function toggleTheme(){ setTheme(currentTheme==='dark'?'light':'dark'); }
 
@@ -487,9 +594,10 @@
   }
   function clearHistory(){ localStorage.removeItem('quiz-history'); }
   function allTimeBestStreak(){ return loadHistory().reduce((m,h)=>Math.max(m,h.bestStreak||0),0); }
+  function rushRecord(){ return loadHistory().filter(h=>h.isRush).reduce((m,h)=>Math.max(m,h.score),0); }
 
   function getGlobalStats() {
-    const h = loadHistory();
+    const h = loadHistory().filter(g=>!g.isRush);
     if (h.length === 0) return { total: 0, avg: 0, games: 0 };
     const totalSolved = h.reduce((s, g) => s + g.score, 0);
     const totalQ = h.reduce((s, g) => s + g.total, 0);
@@ -526,10 +634,12 @@
   const app=document.getElementById('app');
   function render(html){ app.innerHTML=`<div class="card anim-in">${html}</div>`; }
 
-  function topBar(badgeKey){
+  function topBar(badgeKey, rush=false){
+    const cls = rush ? ' badge-rush' : '';
+    const dot  = rush ? ' rush' : '';
     return `<div class="card-top">
       <div class="logo-text">${t().logo1} <span>${t().logo2}</span></div>
-      <div class="badge" role="status"><span class="badge-dot" aria-hidden="true"></span>${t()[badgeKey]}</div>
+      <div class="badge${cls}" role="status"><span class="badge-dot${dot}" aria-hidden="true"></span>${t()[badgeKey]}</div>
     </div>`;
   }
 
@@ -543,6 +653,14 @@
     return           {label:t().grade_lose,      cls:'grade-fail'};
   }
 
+  function rushGradeInfo(score){
+    if(score>=20) return{label:t().rush_grade_20,cls:'grade-perfect'};
+    if(score>=15) return{label:t().rush_grade_15,cls:'grade-great'};
+    if(score>=10) return{label:t().rush_grade_10,cls:'grade-good'};
+    if(score>=5)  return{label:t().rush_grade_5, cls:'grade-fail'};
+    return              {label:t().rush_grade_0, cls:'grade-rush'};
+  }
+
   function formatDate(ts){
     const d=new Date(ts),o={day:'2-digit',month:'2-digit',year:'numeric'},t2={hour:'2-digit',minute:'2-digit'};
     if(lang==='ar') return d.toLocaleDateString('ar-TN',o)+' '+d.toLocaleTimeString('ar-TN',t2);
@@ -551,6 +669,7 @@
   }
 
   function animateCount(el,target,dur=650){
+    if(!el) return;
     const start=performance.now();
     (function step(now){
       const p=Math.min((now-start)/dur,1), ease=1-Math.pow(1-p,3);
@@ -559,15 +678,32 @@
     })(start);
   }
 
+  /* ── Question factory ── */
+  function makeQuestions(total, diff, mode) {
+    const pickOperation = (m) => (m !== 'random' ? m : ['mult','div','add','sub'][Math.floor(Math.random()*4)]);
+    return Array.from({length:total}, () => {
+      const op = pickOperation(mode);
+      const {min,max}=DIFFICULTY[diff];
+      let a=Math.floor(Math.random()*(max-min+1))+min;
+      let b=Math.floor(Math.random()*(max-min+1))+min;
+      let answer,display;
+      if(op==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
+      else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
+      else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
+      else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
+      return{display,answer,op};
+    });
+  }
+
   /* ── DASHBOARD ── */
   function showDashboard(){
     currentScreen = showDashboard;
     const stats = getGlobalStats();
     const best = allTimeBestStreak();
-    
-    if (stats.games === 0) {
-      showSetup();
-      return;
+    const rr = rushRecord();
+
+    if (stats.games === 0 && loadHistory().filter(h=>h.isRush).length === 0) {
+      // First time: show dashboard with just the two action buttons, skip stats
     }
 
     render(`
@@ -579,24 +715,28 @@
         <div class="stat-box"><div class="stat-num" id="ds2">0</div><div class="stat-lbl">${t().dash_games}</div></div>
       </div>
       ${best>0?`<div class="best-streak-banner"><span>${t().all_time_best}</span><strong>🔥 ${best}</strong></div>`:''}
+      ${rr>0?`<div class="rush-info" style="margin-bottom:1.5rem"><span>${t().rush_record}</span><strong style="margin-left:auto;font-family:'Fraunces',serif;font-size:1rem;font-weight:300">⚡ ${rr}</strong></div>`:''}
       <div class="divider"></div>
-      <button class="btn" id="newGame">${t().new_game}</button>
-      <button class="btn btn-outline" id="viewHist">${t().view_history}</button>
+      <div class="dash-actions">
+        <button class="btn" id="newGame">${t().new_game}</button>
+        <button class="btn-rush" id="newRush">⚡ ${t().rush_game}</button>
+      </div>
+      <button class="btn btn-outline" id="viewHist" style="margin-top:0.8rem">${t().view_history}</button>
     `);
 
     [stats.total, stats.avg, stats.games].forEach((v, i) => {
-      const el = document.getElementById('ds' + i);
-      if (el) animateCount(el, v, 800);
+      animateCount(document.getElementById('ds' + i), v, 800);
     });
 
     document.getElementById('newGame').addEventListener('click', showSetup);
+    document.getElementById('newRush').addEventListener('click', showRushSetup);
     document.getElementById('viewHist').addEventListener('click', showHistory);
   }
 
   /* ── SETUP ── */
   function showSetup(){
     currentScreen=showSetup;
-    
+
     render(`
       ${topBar('badge_quiz')}
       <div class="q-label"><span class="q-label-left">${t().new_game}</span></div>
@@ -646,6 +786,7 @@
 
     const inp=document.getElementById('inp'),fb=document.getElementById('fb');
     let pending=false;
+
     function submit(){
       if(pending) return; pending=true;
       const v=parseInt(inp.value);
@@ -655,6 +796,7 @@
       }
       startGame(v,selectedDiff,selectedMode);
     }
+
     document.getElementById('go').addEventListener('click',submit);
     const backBtn = document.getElementById('backDash');
     if (backBtn) backBtn.addEventListener('click', showDashboard);
@@ -663,20 +805,7 @@
 
   /* ── GAME ── */
   function startGame(total,diff,mode){
-    const pickOperation = (m) => (m !== 'random' ? m : ['mult','div','add','sub'][Math.floor(Math.random()*4)]);
-    const questions = Array.from({length:total}, () => {
-      const op = pickOperation(mode);
-      const {min,max}=DIFFICULTY[diff];
-      let a=Math.floor(Math.random()*(max-min+1))+min;
-      let b=Math.floor(Math.random()*(max-min+1))+min;
-      let answer,display;
-      if(op==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
-      else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
-      else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
-      else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
-      return{display,answer,op};
-    });
-
+    const questions = makeQuestions(total, diff, mode);
     const timePerQ=DIFFICULTY[diff].timePerQ;
     const bonusThreshold=DIFFICULTY[diff].bonusThreshold;
     let current=0,score=0,bonusScore=0,streak=0,bestStreak=0,skipped=0;
@@ -756,7 +885,217 @@
     showQuestion();
   }
 
-  /* ── RESULT ── */
+  /* ── RUSH SETUP ── */
+  function showRushSetup(){
+    currentScreen = showRushSetup;
+    render(`
+      ${topBar('badge_rush', true)}
+      <div class="q-label rush-label"><span class="q-label-left">${t().rush_game}</span></div>
+      <div class="q-text">${t().rush_desc.replace(/[?؟]/, '<em class="rush-em">?</em>')}</div>
+
+      <div class="rush-info" style="margin-bottom:1.5rem">${t().rush_info}</div>
+
+      <div class="section-label">${t().difficulty}</div>
+      <div class="diff-row" role="group" aria-label="${t().difficulty}">
+        <button class="diff-btn${selectedDiff==='easy'?' active':''}" data-diff="easy">${t().easy}</button>
+        <button class="diff-btn${selectedDiff==='medium'?' active':''}" data-diff="medium">${t().medium}</button>
+        <button class="diff-btn${selectedDiff==='hard'?' active':''}" data-diff="hard">${t().hard}</button>
+      </div>
+
+      <div class="section-label">${t().mode}</div>
+      <div class="mode-row" role="group" aria-label="${t().mode}">
+        <button class="mode-btn${selectedMode==='random'?' active':''}" data-mode="random">${t().mode_random}</button>
+        <button class="mode-btn${selectedMode==='mult'?' active':''}" data-mode="mult">${t().mult}</button>
+        <button class="mode-btn${selectedMode==='div'?' active':''}" data-mode="div">${t().div}</button>
+        <button class="mode-btn${selectedMode==='add'?' active':''}" data-mode="add">${t().add}</button>
+        <button class="mode-btn${selectedMode==='sub'?' active':''}" data-mode="sub">${t().sub}</button>
+      </div>
+
+      <button class="btn-rush" id="goRush" style="width:100%;margin-bottom:0.8rem">⚡ ${t().start_rush}</button>
+      <button class="btn btn-ghost" id="backDash">${t().back}</button>
+    `);
+
+    document.querySelectorAll('.diff-btn').forEach(b=>{
+      b.addEventListener('click',()=>{
+        selectedDiff=b.dataset.diff; savePref('quiz-diff',selectedDiff);
+        document.querySelectorAll('.diff-btn').forEach(x=>x.classList.toggle('active',x===b));
+      });
+    });
+    document.querySelectorAll('.mode-btn').forEach(b=>{
+      b.addEventListener('click',()=>{
+        selectedMode=b.dataset.mode; savePref('quiz-mode',selectedMode);
+        document.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('active',x===b));
+      });
+    });
+
+    // Add rush card style
+    const card = document.querySelector('.card');
+    if(card) card.classList.add('rush-mode');
+
+    document.getElementById('goRush').addEventListener('click', ()=>startRushGame(selectedDiff, selectedMode));
+    document.getElementById('backDash').addEventListener('click', showDashboard);
+  }
+
+  /* ── RUSH GAME ── */
+  function startRushGame(diff, mode){
+    // Truly unlimited — generate in batches, never stops until death
+    let questions = makeQuestions(100, diff, mode);
+    const timePerQ = DIFFICULTY[diff].timePerQ;
+    let current = 0, survived = 0;
+    let timerInterval = null, timeLeft = timePerQ, answered = false;
+    let escListener = null;
+    let deathReason = null; // 'wrong' | 'timeout'
+
+    function clearTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+    function removeEscListener(){ if(escListener){document.removeEventListener('keydown',escListener);escListener=null;} }
+    function lockInput(){
+      const inp=document.getElementById('inp'), go=document.getElementById('go');
+      if(inp) inp.disabled=true; if(go) go.disabled=true;
+    }
+
+    function doAnswer(v){
+      if(answered) return; answered=true;
+      clearTimer(); removeEscListener(); lockInput();
+      const fb=document.getElementById('fb'), card=document.querySelector('.card'), inp=document.getElementById('inp'), sb=document.getElementById('sb');
+
+      if(v===questions[current].answer){
+        survived++;
+        if(inp) inp.classList.add('correct');
+        if(fb){ fb.innerHTML=t().correct_msg; fb.className='feedback ok'; }
+        if(card){ card.classList.add('flash-ok'); setTimeout(()=>card.classList.remove('flash-ok'),500); }
+        if(sb){ sb.textContent='⚡ '+survived; sb.classList.remove('pop'); void sb.offsetWidth; sb.classList.add('pop'); }
+        soundCorrect();
+        current++;
+        setTimeout(showRushQuestion, 200);
+      } else {
+        deathReason = 'wrong';
+        if(inp) inp.classList.add('wrong');
+        if(fb){ fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
+        if(card){
+          card.classList.add('flash-dead');
+          setTimeout(()=>card.classList.remove('flash-dead'),500);
+          card.classList.add('shake');
+          setTimeout(()=>card.classList.remove('shake'),400);
+        }
+        soundRushDead();
+        setTimeout(()=>showRushResult(survived, diff, mode, deathReason), 1400);
+      }
+    }
+
+    function showRushQuestion(){
+      // Extend question pool if needed
+      if(current >= questions.length) questions = questions.concat(makeQuestions(100, diff, mode));
+      currentScreen = showRushQuestion; answered = false;
+      const q = questions[current];
+
+      render(`
+        ${topBar('badge_rush_game', true)}
+        <div class="rush-info">
+          ${t().rush_info}
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span>${t().rush_survived}</span>
+            <span id="sb" class="streak-badge rush-streak">⚡ ${survived}</span>
+            <span>${t().q_label} ${current+1}</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill rush-fill" style="width:100%"></div></div>
+        </div>
+        <div class="timer-wrap">
+          <div class="timer-meta"><span>${t().timer_label}</span><span id="tl">${timePerQ}s</span></div>
+          <div class="timer-track" role="progressbar" aria-label="${t().timer_label}" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+            <div class="timer-fill" id="tf" style="width:100%"></div>
+          </div>
+        </div>
+        <div class="q-label rush-label"><span class="q-label-left">${t().q_label} ${current+1}</span></div>
+        <div class="q-text" aria-label="Question">${q.display.replace(/em>/g,'em class="rush-em">')} = ?</div>
+        <div class="input-wrap">
+          <input id="inp" class="input rush-input" type="number" placeholder="…"
+            aria-label="Your answer" autocomplete="off" autofocus>
+        </div>
+        <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
+        <button class="btn" id="go" style="background:var(--rush);color:#fff;">${t().submit}</button>
+        <p class="hint">${t().hint} <kbd>Enter</kbd></p>
+      `);
+
+      // Add rush-mode class to card
+      const card = document.querySelector('.card');
+      if(card) card.classList.add('rush-mode');
+
+      const inp=document.getElementById('inp'), fill=document.getElementById('tf'), tEl=document.getElementById('tl');
+      inp.focus(); timeLeft=timePerQ;
+
+      timerInterval=setInterval(()=>{
+        timeLeft=Math.max(0,timeLeft-0.1); const p=(timeLeft/timePerQ)*100;
+        if(fill){ fill.style.width=p+'%'; fill.className='timer-fill'+(p<30?' danger':p<60?' warn':''); }
+        if(tEl) tEl.textContent=Math.ceil(timeLeft)+'s';
+        if(timeLeft<=0){
+          clearTimer(); if(!answered){
+            deathReason='timeout';
+            soundRushDead();
+            answered=true; lockInput();
+            removeEscListener();
+            const fb2=document.getElementById('fb'); if(fb2){fb2.textContent=t().rush_timeout;fb2.className='feedback err';}
+            const card2=document.querySelector('.card');
+            if(card2){card2.classList.add('flash-dead');setTimeout(()=>card2.classList.remove('flash-dead'),500);}
+            setTimeout(()=>showRushResult(survived, diff, mode, 'timeout'), 1400);
+          }
+        }
+      },100);
+
+      escListener=null; // No skip in rush mode
+      document.getElementById('go').addEventListener('click',()=>doAnswer(parseInt(inp.value)));
+      inp.addEventListener('keydown',e=>{if(e.key==='Enter') doAnswer(parseInt(inp.value));});
+    }
+
+    showRushQuestion();
+  }
+
+  /* ── RUSH RESULT ── */
+  function showRushResult(survived, diff, mode, deathReason){
+    currentScreen=()=>showRushResult(survived, diff, mode, deathReason);
+    const g = rushGradeInfo(survived);
+    const wasTimeout = deathReason === 'timeout';
+
+    addHistory({
+      ts:Date.now(), score:survived, total: survived, diff, mode,
+      isRush:true, deathReason,
+      gradeLabel:g.label, gradeCls:g.cls
+    });
+
+    render(`
+      ${topBar('badge_rush_result', true)}
+      <div class="q-label rush-label"><span class="q-label-left">${t().rush_result_label}</span></div>
+      <div class="rush-killed">
+        <div class="rush-killed-num" id="rn0">0</div>
+        <div class="rush-killed-lbl">${wasTimeout ? t().rush_timeout+' — '+t().rush_survived : t().rush_killed_at+' '+(survived+1)}</div>
+      </div>
+      <div class="score-grid">
+        <div class="score-cell"><div class="score-num rush-num" id="rn1">0</div><div class="score-lbl">${t().rush_survived}</div></div>
+        <div class="score-cell"><div class="score-num" id="rn2">0</div><div class="score-lbl">${t().rush_record} ⚡</div></div>
+      </div>
+      <div class="grade-tag ${g.cls}">${g.label}</div>
+      <div class="divider"></div>
+      <button class="btn-rush" id="again">⚡ ${t().play_rush_again}</button>
+      <button class="btn btn-outline" id="change" style="margin-top:0.8rem">${t().change_q}</button>
+      <button class="btn btn-ghost" id="hist">${t().view_history}</button>
+    `);
+
+    // Add rush-mode class to card
+    const card = document.querySelector('.card');
+    if(card) card.classList.add('rush-mode');
+
+    const rec = rushRecord();
+    animateCount(document.getElementById('rn0'), survived, 700);
+    animateCount(document.getElementById('rn1'), survived, 700);
+    animateCount(document.getElementById('rn2'), rec, 700);
+
+    document.getElementById('again').addEventListener('click',()=>startRushGame(diff, mode));
+    document.getElementById('change').addEventListener('click', showRushSetup);
+    document.getElementById('hist').addEventListener('click', showHistory);
+  }
+
+  /* ── RESULT (normal) ── */
   function showResult(score,total,bestStreak,bonusScore,skipped,diff,mode){
     currentScreen=()=>showResult(score,total,bestStreak,bonusScore,skipped,diff,mode);
     const missed=total-score, pct=total>0?Math.round((score/total)*100):0, scaled=Math.round((score/total)*20), g=gradeInfo(score,total);
@@ -790,11 +1129,23 @@
     currentScreen=showHistory;
     const history=loadHistory();
     let rows=history.length===0?`<p class="history-empty">${t().history_empty}</p>`:`<div class="history-list">`+
-      history.map(h=>`<div class="history-row"><div><div class="history-row-top"><span class="history-score">${h.score}/${h.total} · ${h.pct}%</span>
-      <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span></div>
-      <div class="history-row-bottom"><span class="history-date">${formatDate(h.ts)}</span>
-      <span class="history-meta-tag">${T[lang][h.diff]||h.diff}</span><span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
-      ${h.bestStreak?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}</div></div></div>`).join('')+`</div>`;
+      history.map(h=>{
+        const isRush = !!h.isRush;
+        const scoreLabel = isRush
+          ? `⚡ ${h.score} ${t().rush_survived}`
+          : `${h.score}/${h.total} · ${h.pct||0}%`;        const rowCls = isRush ? ' rush-row' : '';
+        const scoreCls = isRush ? ' rush-score' : '';
+        const rushTag = isRush ? `<span class="history-meta-tag rush-tag">RUSH</span>` : '';
+        return `<div class="history-row${rowCls}"><div>
+          <div class="history-row-top"><span class="history-score${scoreCls}">${scoreLabel}</span>
+          <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span></div>
+          <div class="history-row-bottom"><span class="history-date">${formatDate(h.ts)}</span>
+          ${rushTag}
+          <span class="history-meta-tag">${T[lang][h.diff]||h.diff}</span>
+          <span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
+          ${!isRush && h.bestStreak?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}</div>
+          </div></div>`;
+      }).join('')+`</div>`;
     render(`
       ${topBar('badge_history')}
       <div class="history-header"><div class="history-title">${t().history_title}</div>${history.length>0?`<button class="clear-btn" id="clr">${t().clear_history}</button>`:''}</div>
