@@ -18,6 +18,7 @@
       --grid-color:rgba(0,229,180,0.025);--input-bg:#1a2235;
       --toggle-track:rgba(0,229,180,0.15);
       --timer-ok:#00e5b4;--timer-warn:#fbbf24;--timer-danger:#f87171;
+      --rush:#ff6b35;--rush-bg:rgba(255,107,53,0.08);--rush-border:rgba(255,107,53,0.2);
     }
     [data-theme="light"]{
       --bg:#f0f4f8;--bg2:#e2e8f0;--bg3:#ffffff;
@@ -29,6 +30,7 @@
       --grid-color:rgba(0,153,168,0.04);--input-bg:#f8fafc;
       --toggle-track:rgba(0,153,168,0.15);
       --timer-ok:#0099a8;--timer-warn:#d97706;--timer-danger:#dc2626;
+      --rush:#e8500a;--rush-bg:rgba(232,80,10,0.07);--rush-border:rgba(232,80,10,0.2);
     }
 
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -86,15 +88,25 @@
     .lang-btn:hover{border-color:var(--accent);color:var(--accent);}
     .lang-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
 
-    /* ── Card ── */
+    /* ── Card (persistent container) ── */
     .card{
       position:relative;z-index:1;width:100%;max-width:480px;
       background:var(--card-bg);border:1px solid var(--border);border-radius:6px;
       padding:2.5rem 2.8rem;backdrop-filter:blur(12px);box-shadow:var(--shadow);
       transition:background 0.35s,border-color 0.35s,box-shadow 0.35s;
     }
-    .card.anim-in{animation:fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+    /* Rush mode card accent */
+    .card.rush-mode{
+      border-color:var(--rush-border);
+      box-shadow:0 0 0 1px rgba(255,107,53,0.08),0 24px 64px rgba(0,0,0,0.5);
+    }
+
+    /* ── Inner content transitions ── */
+    #screen{transition:opacity 0.18s ease,transform 0.18s ease;}
+    #screen.fade-out{opacity:0;transform:translateY(8px);}
+    #screen.fade-in{animation:screenIn 0.28s cubic-bezier(0.22,1,0.36,1) both;}
+    @keyframes screenIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 
     @keyframes shake{
       0%,100%{transform:translateX(0);}
@@ -117,6 +129,18 @@
     }
     .flash-ok{animation:flashOk 0.5s ease both;}
 
+    @keyframes flashRush{
+      0%{box-shadow:0 0 0 1px rgba(255,107,53,0.08),0 24px 64px rgba(0,0,0,0.5);}
+      40%{box-shadow:0 0 0 3px rgba(255,107,53,0.5),0 24px 64px rgba(0,0,0,0.5);}
+      100%{box-shadow:0 0 0 1px rgba(255,107,53,0.08),0 24px 64px rgba(0,0,0,0.5);}
+    }
+    .flash-rush{animation:flashRush 0.5s ease both;}
+    @keyframes flashRushWrong{
+      0%,100%{box-shadow:0 0 0 1px rgba(255,107,53,0.08),0 24px 64px rgba(0,0,0,0.5);}
+      40%{box-shadow:0 0 0 3px rgba(248,113,113,0.5),0 24px 64px rgba(0,0,0,0.5);}
+    }
+    .flash-rush-wrong{animation:flashRushWrong 0.4s ease both;}
+
     /* ── Card top ── */
     .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
     .logo-text{font-family:'Fraunces',serif;font-size:0.95rem;font-weight:300;color:var(--text);}
@@ -126,9 +150,11 @@
       letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);
       padding:3px 10px;border:1px solid rgba(0,229,180,0.2);border-radius:2px;
     }
+    .badge.rush-badge{color:var(--rush);border-color:var(--rush-border);}
     [data-theme="light"] .badge{border-color:rgba(0,153,168,0.25);}
     body.ar .badge{letter-spacing:0;font-size:0.72rem;}
     .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 1.8s ease-in-out infinite;}
+    .badge.rush-badge .badge-dot{background:var(--rush);}
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.7);}}
 
     /* ── Section label ── */
@@ -148,6 +174,10 @@
     .diff-btn:hover,.mode-btn:hover{border-color:var(--accent);color:var(--accent);}
     .diff-btn.active,.mode-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
 
+    /* Rush variant buttons */
+    .diff-btn.rush-active,.mode-btn.rush-active{background:var(--rush);color:#fff;border-color:var(--rush);}
+    .diff-btn.rush-hover:hover,.mode-btn.rush-hover:hover{border-color:var(--rush);color:var(--rush);}
+
     /* ── Best streak on setup ── */
     .best-streak-banner{
       display:flex;align-items:center;justify-content:space-between;
@@ -156,6 +186,16 @@
     }
     [data-theme="light"] .best-streak-banner{background:rgba(0,153,168,0.05);border-color:rgba(0,153,168,0.15);}
     .best-streak-banner strong{color:var(--accent);font-size:1rem;font-family:'Fraunces',serif;font-weight:300;}
+
+    /* ── Rush Mode Banner ── */
+    .rush-banner{
+      display:flex;align-items:center;gap:10px;
+      background:var(--rush-bg);border:1px solid var(--rush-border);
+      border-radius:3px;padding:0.65rem 0.9rem;margin-bottom:1.4rem;
+    }
+    .rush-banner-icon{font-size:1.1rem;}
+    .rush-banner-text{font-size:0.72rem;color:var(--rush);line-height:1.5;}
+    .rush-banner-text strong{display:block;font-size:0.78rem;letter-spacing:0.04em;text-transform:uppercase;}
 
     /* ── Dashboard Grid ── */
     .dashboard-stats{
@@ -166,6 +206,21 @@
     .stat-box{background:var(--bg3);padding:1.2rem 0.4rem;text-align:center;transition:background 0.35s;}
     .stat-num{font-family:'Fraunces',serif;font-size:1.8rem;color:var(--accent);line-height:1.2;}
     .stat-lbl{font-size:0.6rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+    /* ── Dashboard action cards ── */
+    .dash-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+    .dash-card{
+      padding:1.1rem 1rem;border:1px solid var(--border-strong);border-radius:3px;
+      cursor:pointer;background:transparent;text-align:left;
+      transition:border-color 0.2s,background 0.2s,transform 0.15s;
+    }
+    .dash-card:hover{border-color:var(--accent);background:rgba(0,229,180,0.04);transform:translateY(-1px);}
+    .dash-card.rush-card:hover{border-color:var(--rush);background:var(--rush-bg);}
+    .dash-card-icon{font-size:1.3rem;margin-bottom:0.4rem;display:block;}
+    .dash-card-title{font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);display:block;margin-bottom:2px;}
+    .dash-card-desc{font-size:0.63rem;color:var(--muted);line-height:1.5;}
+    .rush-card .dash-card-title{color:var(--rush);}
+    [data-theme="light"] .dash-card:hover{border-color:var(--accent);}
 
     /* ── Progress ── */
     .progress-wrap{margin-bottom:1.2rem;}
@@ -182,9 +237,26 @@
     .timer-wrap{margin-bottom:1.2rem;}
     .timer-meta{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);margin-bottom:4px;}
     .timer-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
-    .timer-fill{height:100%;border-radius:2px;transition:width:0.1s linear,background 0.3s;background:var(--timer-ok);}
+    .timer-fill{height:100%;border-radius:2px;transition:background 0.3s;background:var(--timer-ok);}
     .timer-fill.warn{background:var(--timer-warn);}
     .timer-fill.danger{background:var(--timer-danger);}
+    .timer-fill.rush-timer{background:var(--rush);}
+
+    /* ── Rush lives ── */
+    .lives-wrap{display:flex;align-items:center;gap:6px;margin-bottom:1rem;}
+    .life{font-size:1rem;transition:all 0.2s;filter:grayscale(0);}
+    .life.lost{filter:grayscale(1);opacity:0.25;transform:scale(0.85);}
+    @keyframes lifeLost{0%{transform:scale(1.4);}100%{transform:scale(0.85);}}
+    .life.losing{animation:lifeLost 0.3s ease both;}
+
+    /* ── Rush score bar ── */
+    .rush-score-bar{
+      display:flex;align-items:center;justify-content:space-between;
+      background:var(--rush-bg);border:1px solid var(--rush-border);
+      border-radius:3px;padding:0.5rem 0.9rem;margin-bottom:1rem;font-size:0.72rem;
+    }
+    .rush-score-num{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--rush);line-height:1;}
+    .rush-score-lbl{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
 
     /* ── Time bonus flash ── */
     .time-bonus{
@@ -200,6 +272,7 @@
       background:rgba(0,229,180,0.08);border:1px solid rgba(0,229,180,0.15);
       border-radius:2px;padding:1px 7px;font-size:0.68rem;color:var(--accent);
     }
+    .streak-badge.rush-streak{background:var(--rush-bg);border-color:var(--rush-border);color:var(--rush);}
     [data-theme="light"] .streak-badge{background:rgba(0,153,168,0.07);border-color:rgba(0,153,168,0.2);}
     @keyframes streakPop{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
     .streak-badge.pop{animation:streakPop 0.3s cubic-bezier(0.34,1.56,0.64,1);}
@@ -210,8 +283,10 @@
       color:var(--accent);margin-bottom:0.8rem;
       display:flex;align-items:center;justify-content:space-between;gap:8px;
     }
+    .q-label.rush-label{color:var(--rush);}
     .q-label-left{display:flex;align-items:center;gap:8px;}
     .q-label-left::before{content:'';display:inline-block;width:20px;height:1px;background:var(--accent);}
+    .rush-label .q-label-left::before{background:var(--rush);}
     body.ar .q-label{letter-spacing:0;}
     .q-text{
       font-family:'Fraunces',serif;font-size:clamp(2.2rem,8vw,3.8rem);
@@ -219,6 +294,7 @@
     }
     body.ar .q-text{font-family:'Cairo',sans-serif;letter-spacing:0;}
     .q-text em{font-style:italic;color:var(--accent);}
+    .q-text.rush-q em{color:var(--rush);}
     .q-sub{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:2rem;}
 
     /* ── Input / buttons ── */
@@ -233,6 +309,7 @@
     .input::-webkit-outer-spin-button,.input::-webkit-inner-spin-button{-webkit-appearance:none;}
     .input::placeholder{color:var(--muted);}
     .input:focus{border-color:rgba(0,229,180,0.4);}
+    .input.rush-input:focus{border-color:rgba(255,107,53,0.5);}
     [data-theme="light"] .input:focus{border-color:rgba(0,153,168,0.5);}
     .input.correct{border-color:var(--success);}
     .input.wrong{border-color:var(--danger);}
@@ -252,8 +329,11 @@
     .btn:hover:not(:disabled){filter:brightness(0.9);}
     .btn:active:not(:disabled){transform:scale(0.98);}
     .btn:disabled{opacity:0.45;cursor:default;}
+    .btn.rush-btn{background:var(--rush);}
     .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent);margin-top:0.8rem;}
     .btn-outline:hover:not(:disabled){background:rgba(0,229,180,0.07);}
+    .btn-outline.rush-outline{color:var(--rush);border-color:var(--rush);}
+    .btn-outline.rush-outline:hover:not(:disabled){background:var(--rush-bg);}
     [data-theme="light"] .btn-outline:hover:not(:disabled){background:rgba(0,153,168,0.07);}
     .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);margin-top:0.8rem;}
     .btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--border-strong);}
@@ -270,6 +350,7 @@
     }
     .score-cell{background:var(--bg3);padding:1.2rem 1rem;text-align:center;transition:background 0.35s;}
     .score-num{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--accent);line-height:1;}
+    .score-num.rush-num{color:var(--rush);}
     .score-lbl{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
     body.ar .score-lbl{letter-spacing:0;}
 
@@ -282,6 +363,7 @@
     .grade-good{background:rgba(250,204,21,0.1);color:#fde68a;border:1px solid rgba(250,204,21,0.25);}
     [data-theme="light"] .grade-good{color:#92400e;background:rgba(250,204,21,0.15);}
     .grade-fail{background:rgba(248,113,113,0.1);color:var(--danger);border:1px solid rgba(248,113,113,0.25);}
+    .grade-rush{background:var(--rush-bg);color:var(--rush);border:1px solid var(--rush-border);}
 
     .divider{height:1px;background:var(--border);margin:1.5rem 0;transition:background 0.35s;}
     .hint{font-size:0.72rem;color:var(--muted);text-align:center;margin-top:1rem;}
@@ -295,24 +377,41 @@
     .clear-btn{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.06em;background:transparent;border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:2px;cursor:pointer;transition:0.2s;text-transform:uppercase;}
     .clear-btn:hover{border-color:var(--danger);color:var(--danger);}
     .history-empty{font-size:0.8rem;color:var(--muted);text-align:center;padding:1.5rem 0;}
-    .history-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;max-height:320px;overflow-y:auto;}
+    .history-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;max-height:260px;overflow-y:auto;}
     .history-list::-webkit-scrollbar{width:4px;}
     .history-list::-webkit-scrollbar-track{background:transparent;}
     .history-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
     .history-row{background:var(--bg3);padding:0.7rem 1rem;display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:center;font-size:0.78rem;transition:background 0.15s;}
     .history-row:hover{background:var(--bg2);}
+    .history-row.rush-row{border-left:2px solid var(--rush);}
     .history-row-top{display:flex;justify-content:space-between;align-items:center;gap:0.5rem;}
     .history-row-bottom{display:flex;align-items:center;gap:0.5rem;margin-top:2px;}
     .history-date{color:var(--muted);font-size:0.66rem;}
     .history-score{color:var(--accent);font-weight:500;white-space:nowrap;font-size:0.8rem;}
+    .history-score.rush-score{color:var(--rush);}
     .history-grade{font-size:0.62rem;padding:2px 7px;border-radius:2px;white-space:nowrap;}
     .history-meta-tag{font-size:0.6rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:0.05em;}
+    .history-meta-tag.rush-tag{color:var(--rush);border-color:var(--rush-border);background:var(--rush-bg);}
+
+    /* ── History tabs ── */
+    .history-tabs{display:flex;gap:4px;margin-bottom:1rem;}
+    .hist-tab{
+      flex:1;padding:0.45rem 0.5rem;font-family:'DM Mono',monospace;font-size:0.68rem;
+      letter-spacing:0.05em;text-transform:uppercase;
+      background:transparent;border:1px solid var(--border-strong);color:var(--muted);
+      border-radius:2px;cursor:pointer;transition:0.2s;
+    }
+    .hist-tab:hover{border-color:var(--accent);color:var(--accent);}
+    .hist-tab.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+    .hist-tab.rush-tab-active{background:var(--rush);color:#fff;border-color:var(--rush);}
+    .hist-tab.rush-tab-inactive:hover{border-color:var(--rush);color:var(--rush);}
 
     @media(max-width:500px){
       .card{padding:1.8rem 1.5rem;}
       .history-row{grid-template-columns:1fr;}
       .diff-row{flex-wrap:wrap;}
       .mode-row{grid-template-columns:1fr 1fr 1fr;}
+      .dash-actions{grid-template-columns:1fr;}
     }
   </style>
 </head>
@@ -331,7 +430,9 @@
     </div>
   </div>
 
-  <main id="app" role="main" aria-live="polite"></main>
+  <div class="card" id="card" role="main">
+    <div id="screen" aria-live="polite"></div>
+  </div>
 
   <script>
   'use strict';
@@ -340,7 +441,7 @@
   const T = {
     en:{
       logo1:'Test your',logo2:'Brain',
-      badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',badge_dashboard:'Dashboard',
+      badge_quiz:'Math Quiz',badge_game:'In Game',badge_result:'Result',badge_history:'History',badge_dashboard:'Dashboard',badge_rush:'Rush Mode',badge_rush_over:'Rush Over',
       new_game:'New game',how_many:'How many questions?',choose:'Choose between 1 and 20',
       difficulty:'Difficulty',easy:'Easy',medium:'Medium',hard:'Hard',
       mode:'Operation',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Random',
@@ -356,11 +457,17 @@
       grade_perfect:'Perfect! 🏆',grade_excellent:'Excellent! 🔥',grade_amazing:"You're Amazing! 🌟",
       grade_keep:'Keep Going 👍',grade_harder:'Try Harder 💪',grade_lose:'You Lose 😢',
       wrong_prefix:'✗ Answer was',time_bonus:'+bonus',skipped:'↷ Skipped',
-      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress'
+      dash_total:'Solved', dash_avg:'Avg %', dash_games:'Games', dash_title:'Your Progress',
+      classic_mode:'Classic',rush_mode:'Rush',
+      rush_title:'Rush Mode',rush_desc:'Infinite questions. One wrong = lose a life. Survive as long as you can.',
+      rush_lives:'Lives',rush_solved:'Solved',rush_record:'Best',rush_start:'Start Rush',
+      rush_game_over:'Rush Over',rush_survived:'Survived',rush_new_record:'New Record! 🎉',rush_close_call:'Close call!',
+      hist_tab_all:'All',hist_tab_classic:'Classic',hist_tab_rush:'Rush',
+      rush_tag:'RUSH',
     },
     fr:{
       logo1:'Teste ton',logo2:'Cerveau',
-      badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',badge_dashboard:'Tableau',
+      badge_quiz:'Quiz Maths',badge_game:'En jeu',badge_result:'Résultat',badge_history:'Historique',badge_dashboard:'Tableau',badge_rush:'Mode Rush',badge_rush_over:'Rush Terminé',
       new_game:'Nouveau jeu',how_many:'Combien de questions ?',choose:'Choisir entre 1 et 20',
       difficulty:'Difficulté',easy:'Facile',medium:'Moyen',hard:'Difficile',
       mode:'Opération',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'Aléatoire',
@@ -376,11 +483,17 @@
       grade_perfect:'Parfait ! 🏆',grade_excellent:'Excellent ! 🔥',grade_amazing:'Incroyable ! 🌟',
       grade_keep:'Continue ! 👍',grade_harder:'Encore effort ! 💪',grade_lose:'Perdu 😢',
       wrong_prefix:'✗ Réponse :',time_bonus:'+bonus',skipped:'↷ Passé',
-      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression'
+      dash_total:'Résolus', dash_avg:'Moy %', dash_games:'Parties', dash_title:'Votre Progression',
+      classic_mode:'Classique',rush_mode:'Rush',
+      rush_title:'Mode Rush',rush_desc:'Questions infinies. Une erreur = perdre une vie. Survivez le plus longtemps possible.',
+      rush_lives:'Vies',rush_solved:'Résolus',rush_record:'Record',rush_start:'Lancer Rush',
+      rush_game_over:'Rush Terminé',rush_survived:'Survécu',rush_new_record:'Nouveau Record! 🎉',rush_close_call:'Juste !',
+      hist_tab_all:'Tout',hist_tab_classic:'Classique',hist_tab_rush:'Rush',
+      rush_tag:'RUSH',
     },
     ar:{
       logo1:'تحدَّ',logo2:'عقلك',
-      badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',badge_dashboard:'لوحة التحكم',
+      badge_quiz:'اختبار رياضيات',badge_game:'جارٍ اللعب',badge_result:'النتيجة',badge_history:'السجل',badge_dashboard:'لوحة التحكم',badge_rush:'وضع الاندفاع',badge_rush_over:'انتهى الاندفاع',
       new_game:'لعبة جديدة',how_many:'كم سؤالاً تريد؟',choose:'اختر بين 1 و 20',
       difficulty:'الصعوبة',easy:'سهل',medium:'متوسط',hard:'صعب',
       mode:'العملية',mult:'×',div:'÷',add:'+',sub:'−',random:'?',mode_random:'عشوائي',
@@ -396,7 +509,13 @@
       grade_perfect:'مثالي! 🏆',grade_excellent:'ممتاز! 🔥',grade_amazing:'رائع! 🌟',
       grade_keep:'واصل! 👍',grade_harder:'حاول أكثر! 💪',grade_lose:'خسرت 😢',
       wrong_prefix:'✗ الإجابة كانت',time_bonus:'+مكافأة',skipped:'↷ تخطي',
-      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك'
+      dash_total:'تم حلها', dash_avg:'متوسط %', dash_games:'ألعاب', dash_title:'تقدمك',
+      classic_mode:'كلاسيكي',rush_mode:'اندفاع',
+      rush_title:'وضع الاندفاع',rush_desc:'أسئلة لا نهائية. خطأ واحد = خسارة حياة. انجُ أطول فترة ممكنة.',
+      rush_lives:'الأرواح',rush_solved:'تم حلها',rush_record:'الرقم القياسي',rush_start:'ابدأ الاندفاع',
+      rush_game_over:'انتهى الاندفاع',rush_survived:'نجا',rush_new_record:'رقم قياسي جديد! 🎉',rush_close_call:'بصعوبة!',
+      hist_tab_all:'الكل',hist_tab_classic:'كلاسيكي',hist_tab_rush:'اندفاع',
+      rush_tag:'اندفاع',
     }
   };
 
@@ -405,7 +524,7 @@
     medium:{min:1, max:10, timePerQ:12, bonusThreshold:0.5},
     hard:  {min:6, max:12, timePerQ:8,  bonusThreshold:0.4}
   };
-
+  const RUSH_LIVES = 3;
   const MODE_LABELS = {mult:'×', div:'÷', add:'+', sub:'−', random:'?'};
 
   /* ── State ── */
@@ -414,6 +533,9 @@
   let currentScreen = null;
   let selectedDiff  = loadPref('quiz-diff','medium');
   let selectedMode  = loadPref('quiz-mode','random');
+  let rushDiff      = loadPref('quiz-rush-diff','medium');
+  let rushMode      = loadPref('quiz-rush-mode','random');
+  let histTab       = 'all'; // 'all' | 'classic' | 'rush'
 
   /* ── Audio ── */
   let audioCtx = null;
@@ -430,23 +552,15 @@
       osc.type = type; osc.frequency.value = freq;
       gn.gain.setValueAtTime(gain, ctx.currentTime);
       gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + duration);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + duration);
     }catch(e){}
   }
-  function soundCorrect(){
-    playTone(523.25,'sine',0.12,0.14);
-    setTimeout(()=>playTone(783.99,'sine',0.15,0.12),80);
-  }
-  function soundWrong(){
-    playTone(220,'sawtooth',0.18,0.12);
-  }
-  function soundTimeout(){
-    playTone(180,'sine',0.3,0.15);
-  }
-  function soundSkip(){
-    playTone(350,'triangle',0.1,0.1);
-  }
+  function soundCorrect(){ playTone(523.25,'sine',0.12,0.14); setTimeout(()=>playTone(783.99,'sine',0.15,0.12),80); }
+  function soundWrong(){ playTone(220,'sawtooth',0.18,0.12); }
+  function soundTimeout(){ playTone(180,'sine',0.3,0.15); }
+  function soundSkip(){ playTone(350,'triangle',0.1,0.1); }
+  function soundRushLost(){ playTone(200,'sawtooth',0.25,0.18); setTimeout(()=>playTone(150,'sawtooth',0.3,0.18),120); }
+  function soundRushRecord(){ [0,80,160,240].forEach((d,i)=>setTimeout(()=>playTone([523,659,784,1047][i],'sine',0.2,0.15),d)); }
 
   /* ── Core Logic ── */
   function detectLang(){
@@ -461,19 +575,13 @@
     document.documentElement.lang=l;
     document.documentElement.dir=l==='ar'?'rtl':'ltr';
     if(l==='ar') document.body.classList.add('ar'); else document.body.classList.remove('ar');
-    document.querySelectorAll('.lang-btn').forEach(b=>{
-      b.classList.toggle('active',b.dataset.lang===l);
-    });
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
     if(currentScreen) currentScreen();
   }
   function t(){ return T[lang]; }
 
   function detectTheme(){ return localStorage.getItem('quiz-theme')||'dark'; }
-  function setTheme(t){
-    currentTheme=t;
-    localStorage.setItem('quiz-theme',t);
-    document.documentElement.setAttribute('data-theme',t);
-  }
+  function setTheme(th){ currentTheme=th; localStorage.setItem('quiz-theme',th); document.documentElement.setAttribute('data-theme',th); }
   function toggleTheme(){ setTheme(currentTheme==='dark'?'light':'dark'); }
 
   function loadPref(k,def){ return localStorage.getItem(k)||def; }
@@ -481,23 +589,19 @@
 
   function loadHistory(){ try{return JSON.parse(localStorage.getItem('quiz-history')||'[]');}catch(e){return [];} }
   function addHistory(item){
-    const h=loadHistory();
-    h.unshift(item);
+    const h=loadHistory(); h.unshift(item);
     localStorage.setItem('quiz-history',JSON.stringify(h.slice(0,50)));
   }
   function clearHistory(){ localStorage.removeItem('quiz-history'); }
-  function allTimeBestStreak(){ return loadHistory().reduce((m,h)=>Math.max(m,h.bestStreak||0),0); }
+  function allTimeBestStreak(){ return loadHistory().filter(h=>!h.rush).reduce((m,h)=>Math.max(m,h.bestStreak||0),0); }
+  function rushBestScore(){ return loadHistory().filter(h=>h.rush).reduce((m,h)=>Math.max(m,h.score||0),0); }
 
   function getGlobalStats() {
-    const h = loadHistory();
+    const h = loadHistory().filter(x=>!x.rush);
     if (h.length === 0) return { total: 0, avg: 0, games: 0 };
     const totalSolved = h.reduce((s, g) => s + g.score, 0);
     const totalQ = h.reduce((s, g) => s + g.total, 0);
-    return {
-      total: totalSolved,
-      avg: Math.round((totalSolved / totalQ) * 100),
-      games: h.length
-    };
+    return { total: totalSolved, avg: totalQ>0?Math.round((totalSolved / totalQ) * 100):0, games: h.length };
   }
 
   /* ── Canvas Background ── */
@@ -522,14 +626,27 @@
   }
   drawPts();
 
-  /* ── Helpers ── */
-  const app=document.getElementById('app');
-  function render(html){ app.innerHTML=`<div class="card anim-in">${html}</div>`; }
+  /* ── Smooth screen transitions ── */
+  const screen = document.getElementById('screen');
+  const card   = document.getElementById('card');
 
-  function topBar(badgeKey){
+  function render(html, isRush=false){
+    screen.classList.remove('fade-in');
+    screen.classList.add('fade-out');
+    card.classList.toggle('rush-mode', isRush);
+    setTimeout(()=>{
+      screen.innerHTML = html;
+      screen.classList.remove('fade-out');
+      screen.classList.add('fade-in');
+    }, 190);
+  }
+
+  function topBar(badgeKey, isRush=false){
+    const logoSpan = isRush ? `<span style="color:var(--rush)">${t().logo2}</span>` : `<span>${t().logo2}</span>`;
+    const badgeCls = isRush ? 'badge rush-badge' : 'badge';
     return `<div class="card-top">
-      <div class="logo-text">${t().logo1} <span>${t().logo2}</span></div>
-      <div class="badge" role="status"><span class="badge-dot" aria-hidden="true"></span>${t()[badgeKey]}</div>
+      <div class="logo-text">${t().logo1} ${logoSpan}</div>
+      <div class="${badgeCls}" role="status"><span class="badge-dot" aria-hidden="true"></span>${t()[badgeKey]}</div>
     </div>`;
   }
 
@@ -551,6 +668,7 @@
   }
 
   function animateCount(el,target,dur=650){
+    if(!el) return;
     const start=performance.now();
     (function step(now){
       const p=Math.min((now-start)/dur,1), ease=1-Math.pow(1-p,3);
@@ -564,11 +682,8 @@
     currentScreen = showDashboard;
     const stats = getGlobalStats();
     const best = allTimeBestStreak();
-    
-    if (stats.games === 0) {
-      showSetup();
-      return;
-    }
+    const rushBest = rushBestScore();
+    const hasHistory = loadHistory().length > 0;
 
     render(`
       ${topBar('badge_dashboard')}
@@ -579,24 +694,36 @@
         <div class="stat-box"><div class="stat-num" id="ds2">0</div><div class="stat-lbl">${t().dash_games}</div></div>
       </div>
       ${best>0?`<div class="best-streak-banner"><span>${t().all_time_best}</span><strong>🔥 ${best}</strong></div>`:''}
-      <div class="divider"></div>
-      <button class="btn" id="newGame">${t().new_game}</button>
-      <button class="btn btn-outline" id="viewHist">${t().view_history}</button>
+
+      <div class="dash-actions">
+        <button class="dash-card" id="btnClassic">
+          <span class="dash-card-icon">📐</span>
+          <span class="dash-card-title">${t().classic_mode}</span>
+          <span class="dash-card-desc">${t().how_many.replace('?','')}</span>
+        </button>
+        <button class="dash-card rush-card" id="btnRush">
+          <span class="dash-card-icon">⚡</span>
+          <span class="dash-card-title">${t().rush_mode}</span>
+          <span class="dash-card-desc">${t().rush_desc.substring(0,40)}…${rushBest>0?' 🏆 '+rushBest:''}</span>
+        </button>
+      </div>
+
+      ${hasHistory?`<button class="btn btn-ghost" id="viewHist">${t().view_history}</button>`:''}
     `);
 
     [stats.total, stats.avg, stats.games].forEach((v, i) => {
-      const el = document.getElementById('ds' + i);
-      if (el) animateCount(el, v, 800);
+      animateCount(document.getElementById('ds'+i), v, 800);
     });
 
-    document.getElementById('newGame').addEventListener('click', showSetup);
-    document.getElementById('viewHist').addEventListener('click', showHistory);
+    document.getElementById('btnClassic').addEventListener('click', showSetup);
+    document.getElementById('btnRush').addEventListener('click', showRushSetup);
+    const vh = document.getElementById('viewHist');
+    if(vh) vh.addEventListener('click', showHistory);
   }
 
-  /* ── SETUP ── */
+  /* ── SETUP (Classic) ── */
   function showSetup(){
     currentScreen=showSetup;
-    
     render(`
       ${topBar('badge_quiz')}
       <div class="q-label"><span class="q-label-left">${t().new_game}</span></div>
@@ -625,21 +752,19 @@
       </div>
       <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
       <button class="btn" id="go">${t().start}</button>
-      ${loadHistory().length > 0 ? `<button class="btn btn-ghost" id="backDash">${t().back}</button>` : ''}
+      <button class="btn btn-ghost" id="backDash">${t().back}</button>
       <p class="hint">${t().hint} <kbd>Enter</kbd></p>
     `);
 
     document.querySelectorAll('.diff-btn').forEach(b=>{
       b.addEventListener('click',()=>{
-        selectedDiff=b.dataset.diff;
-        savePref('quiz-diff',selectedDiff);
+        selectedDiff=b.dataset.diff; savePref('quiz-diff',selectedDiff);
         document.querySelectorAll('.diff-btn').forEach(x=>x.classList.toggle('active',x===b));
       });
     });
     document.querySelectorAll('.mode-btn').forEach(b=>{
       b.addEventListener('click',()=>{
-        selectedMode=b.dataset.mode;
-        savePref('quiz-mode',selectedMode);
+        selectedMode=b.dataset.mode; savePref('quiz-mode',selectedMode);
         document.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('active',x===b));
       });
     });
@@ -649,19 +774,232 @@
     function submit(){
       if(pending) return; pending=true;
       const v=parseInt(inp.value);
-      if(isNaN(v)||v<1||v>20){
-        fb.textContent=t().err_range;fb.className='feedback err';
-        inp.classList.add('wrong');pending=false;return;
-      }
+      if(isNaN(v)||v<1||v>20){ fb.textContent=t().err_range;fb.className='feedback err';inp.classList.add('wrong');pending=false;return; }
       startGame(v,selectedDiff,selectedMode);
     }
     document.getElementById('go').addEventListener('click',submit);
-    const backBtn = document.getElementById('backDash');
-    if (backBtn) backBtn.addEventListener('click', showDashboard);
+    document.getElementById('backDash').addEventListener('click',showDashboard);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
   }
 
-  /* ── GAME ── */
+  /* ── RUSH SETUP ── */
+  function showRushSetup(){
+    currentScreen = showRushSetup;
+    const best = rushBestScore();
+    render(`
+      ${topBar('badge_rush', true)}
+      <div class="q-label rush-label"><span class="q-label-left">${t().rush_title}</span></div>
+
+      <div class="rush-banner">
+        <span class="rush-banner-icon">⚡</span>
+        <div class="rush-banner-text">
+          <strong>${t().rush_title}</strong>
+          ${t().rush_desc}
+        </div>
+      </div>
+
+      ${best>0?`<div class="best-streak-banner" style="border-color:var(--rush-border);background:var(--rush-bg);">
+        <span style="color:var(--muted)">${t().rush_record}</span>
+        <strong style="color:var(--rush)">⚡ ${best}</strong>
+      </div>`:''}
+
+      <div class="section-label">${t().difficulty}</div>
+      <div class="diff-row" role="group">
+        <button class="diff-btn${rushDiff==='easy'?' rush-active':''}" data-rdiff="easy">${t().easy}</button>
+        <button class="diff-btn${rushDiff==='medium'?' rush-active':''}" data-rdiff="medium">${t().medium}</button>
+        <button class="diff-btn${rushDiff==='hard'?' rush-active':''}" data-rdiff="hard">${t().hard}</button>
+      </div>
+
+      <div class="section-label">${t().mode}</div>
+      <div class="mode-row" role="group">
+        <button class="mode-btn${rushMode==='random'?' rush-active':''}" data-rmode="random">${t().mode_random}</button>
+        <button class="mode-btn${rushMode==='mult'?' rush-active':''}" data-rmode="mult">${t().mult}</button>
+        <button class="mode-btn${rushMode==='div'?' rush-active':''}" data-rmode="div">${t().div}</button>
+        <button class="mode-btn${rushMode==='add'?' rush-active':''}" data-rmode="add">${t().add}</button>
+        <button class="mode-btn${rushMode==='sub'?' rush-active':''}" data-rmode="sub">${t().sub}</button>
+      </div>
+
+      <button class="btn rush-btn" id="go">${t().rush_start}</button>
+      <button class="btn btn-ghost" id="backDash">${t().back}</button>
+    `, true);
+
+    document.querySelectorAll('[data-rdiff]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        rushDiff=b.dataset.rdiff; savePref('quiz-rush-diff',rushDiff);
+        document.querySelectorAll('[data-rdiff]').forEach(x=>{x.classList.remove('rush-active','active');x.classList.toggle('rush-active',x===b);});
+      });
+    });
+    document.querySelectorAll('[data-rmode]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        rushMode=b.dataset.rmode; savePref('quiz-rush-mode',rushMode);
+        document.querySelectorAll('[data-rmode]').forEach(x=>{x.classList.remove('rush-active','active');x.classList.toggle('rush-active',x===b);});
+      });
+    });
+    document.getElementById('go').addEventListener('click',()=>startRushGame(rushDiff,rushMode));
+    document.getElementById('backDash').addEventListener('click',showDashboard);
+  }
+
+  /* ── RUSH GAME ── */
+  function startRushGame(diff, mode){
+    const timePerQ = DIFFICULTY[diff].timePerQ;
+    let lives = RUSH_LIVES, score = 0, streak = 0, bestStreak = 0;
+    let answered = false, timerInterval = null, timeLeft = timePerQ;
+    let currentQ = null;
+
+    function makeQ(){
+      const ops = ['mult','div','add','sub'];
+      const op = (mode !== 'random') ? mode : ops[Math.floor(Math.random()*4)];
+      const {min,max} = DIFFICULTY[diff];
+      let a=Math.floor(Math.random()*(max-min+1))+min;
+      let b=Math.floor(Math.random()*(max-min+1))+min;
+      let answer,display;
+      if(op==='mult'){ answer=a*b; display=`<em>${a}</em> × <em>${b}</em>`; }
+      else if(op==='div'){ const prod=a*b; answer=a; a=prod; display=`<em>${a}</em> ÷ <em>${b}</em>`; }
+      else if(op==='add'){ answer=a+b; display=`<em>${a}</em> + <em>${b}</em>`; }
+      else { if(a<b){const tmp=a;a=b;b=tmp;} answer=a-b; display=`<em>${a}</em> − <em>${b}</em>`; }
+      return{display,answer};
+    }
+
+    function livesHtml(){
+      let s='';
+      for(let i=0;i<RUSH_LIVES;i++) s+=`<span class="life${i>=lives?' lost':''}" id="life${i}">❤️</span>`;
+      return s;
+    }
+
+    function clearTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+
+    function renderGame(){
+      currentQ = makeQ();
+      answered = false; timeLeft = timePerQ;
+      currentScreen = renderGame;
+
+      render(`
+        ${topBar('badge_rush', true)}
+        <div class="rush-score-bar">
+          <div><div class="rush-score-num" id="rushScoreNum">${score}</div><div class="rush-score-lbl">${t().rush_solved}</div></div>
+          <div class="lives-wrap" id="livesWrap">${livesHtml()}</div>
+          <div><div class="rush-score-num" id="rushBestNum" style="font-size:1rem;color:var(--muted)">${rushBestScore()>0?'⚡'+rushBestScore():''}</div><div class="rush-score-lbl">${t().rush_record}</div></div>
+        </div>
+        <div class="timer-wrap">
+          <div class="timer-meta"><span>${t().timer_label}</span><span id="tl">${timePerQ}s</span></div>
+          <div class="timer-track"><div class="timer-fill rush-timer" id="tf" style="width:100%"></div></div>
+        </div>
+        <div class="q-label rush-label">
+          <span class="q-label-left">${t().q_label} #${score+1}</span>
+          <span class="streak-badge rush-streak" id="sb">🔥 ${streak}</span>
+        </div>
+        <div class="q-text rush-q">${currentQ.display} = ?</div>
+        <div class="input-wrap">
+          <input id="inp" class="input rush-input" type="number" placeholder="…"
+            aria-label="Your answer" autocomplete="off" autofocus>
+        </div>
+        <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
+        <button class="btn rush-btn" id="go">${t().submit}</button>
+      `, true);
+
+      const inp=document.getElementById('inp'), fill=document.getElementById('tf'), tEl=document.getElementById('tl');
+      inp.focus();
+
+      timerInterval = setInterval(()=>{
+        timeLeft = Math.max(0, timeLeft-0.1);
+        const p = (timeLeft/timePerQ)*100;
+        if(fill){ fill.style.width=p+'%'; }
+        if(tEl) tEl.textContent = Math.ceil(timeLeft)+'s';
+        if(timeLeft<=0){ clearTimer(); if(!answered) doRushAnswer(null); }
+      },100);
+
+      document.getElementById('go').addEventListener('click',()=>doRushAnswer(parseInt(inp.value)));
+      inp.addEventListener('keydown',e=>{if(e.key==='Enter')doRushAnswer(parseInt(inp.value));});
+    }
+
+    function doRushAnswer(v){
+      if(answered) return; answered=true;
+      clearTimer();
+      const inp=document.getElementById('inp'), fb=document.getElementById('fb'), sb=document.getElementById('sb');
+
+      if(v===currentQ.answer){
+        score++; streak++; if(streak>bestStreak) bestStreak=streak;
+        if(inp) inp.classList.add('correct');
+        if(fb){ fb.textContent=t().correct_msg; fb.className='feedback ok'; }
+        card.classList.remove('flash-rush-wrong');
+        void card.offsetWidth;
+        card.classList.add('flash-rush');
+        setTimeout(()=>card.classList.remove('flash-rush'),500);
+        if(sb){ sb.textContent='🔥 '+streak; sb.classList.remove('pop'); void sb.offsetWidth; sb.classList.add('pop'); }
+        soundCorrect();
+        setTimeout(renderGame, 900);
+      } else {
+        // Lose a life
+        streak = 0;
+        lives--;
+        if(inp) inp.classList.add('wrong');
+        if(fb){ fb.textContent=`${t().wrong_prefix} ${currentQ.answer}`; fb.className='feedback err'; }
+        if(sb) sb.textContent='🔥 0';
+
+        // Animate lost life
+        const lifeEl = document.getElementById('life'+lives);
+        if(lifeEl){ lifeEl.classList.add('losing'); setTimeout(()=>lifeEl.classList.add('lost'),300); }
+
+        card.classList.remove('flash-rush');
+        void card.offsetWidth;
+        card.classList.add('shake','flash-rush-wrong');
+        setTimeout(()=>card.classList.remove('shake','flash-rush-wrong'),500);
+
+        if(lives<=0){
+          soundRushLost();
+          setTimeout(()=>showRushResult(score,bestStreak,diff,mode), 1100);
+        } else {
+          soundWrong();
+          setTimeout(renderGame, 1100);
+        }
+      }
+    }
+
+    renderGame();
+  }
+
+  /* ── RUSH RESULT ── */
+  function showRushResult(score, bestStreak, diff, mode){
+    currentScreen = ()=>showRushResult(score,bestStreak,diff,mode);
+    const prevBest = rushBestScore();
+    const isRecord = score > prevBest;
+
+    addHistory({ts:Date.now(), score, total:score, pct:100, bestStreak, diff, mode, rush:true,
+      gradeLabel: isRecord ? t().rush_new_record : (score>0?t().grade_excellent:t().grade_lose),
+      gradeCls: isRecord ? 'grade-rush' : (score>0?'grade-great':'grade-fail')
+    });
+
+    if(isRecord && score > 0) soundRushRecord();
+
+    render(`
+      ${topBar('badge_rush_over', true)}
+      <div class="q-label rush-label"><span class="q-label-left">${t().rush_game_over}</span></div>
+      <div class="q-text rush-q" style="font-size:clamp(1.8rem,6vw,2.8rem)">${t().rush_survived} <em>${score}</em></div>
+
+      <div class="score-grid">
+        <div class="score-cell"><div class="score-num rush-num" id="rn0">0</div><div class="score-lbl">${t().rush_solved}</div></div>
+        <div class="score-cell"><div class="score-num rush-num" id="rn1">0</div><div class="score-lbl">${t().best_streak} 🔥</div></div>
+        <div class="score-cell"><div class="score-num" id="rn2">${prevBest}</div><div class="score-lbl">${t().rush_record} ⚡</div></div>
+        <div class="score-cell"><div class="score-num">${isRecord?'🏆':'—'}</div><div class="score-lbl">${isRecord?t().rush_new_record:t().rush_close_call}</div></div>
+      </div>
+
+      ${isRecord?`<div class="grade-tag grade-rush">${t().rush_new_record}</div>`:
+       (score>0?`<div class="grade-tag grade-great">${t().grade_excellent}</div>`:
+       `<div class="grade-tag grade-fail">${t().grade_lose}</div>`)}
+
+      <div class="divider"></div>
+      <button class="btn rush-btn" id="again">${t().play_again}</button>
+      <button class="btn btn-outline rush-outline" id="change">${t().change_q}</button>
+      <button class="btn btn-ghost" id="hist">${t().view_history}</button>
+    `, true);
+
+    [score, bestStreak].forEach((v,i)=>animateCount(document.getElementById('rn'+i),v,700));
+    document.getElementById('again').addEventListener('click',()=>startRushGame(diff,mode));
+    document.getElementById('change').addEventListener('click',showRushSetup);
+    document.getElementById('hist').addEventListener('click',showHistory);
+  }
+
+  /* ── CLASSIC GAME ── */
   function startGame(total,diff,mode){
     const pickOperation = (m) => (m !== 'random' ? m : ['mult','div','add','sub'][Math.floor(Math.random()*4)]);
     const questions = Array.from({length:total}, () => {
@@ -677,11 +1015,9 @@
       return{display,answer,op};
     });
 
-    const timePerQ=DIFFICULTY[diff].timePerQ;
-    const bonusThreshold=DIFFICULTY[diff].bonusThreshold;
+    const timePerQ=DIFFICULTY[diff].timePerQ, bonusThreshold=DIFFICULTY[diff].bonusThreshold;
     let current=0,score=0,bonusScore=0,streak=0,bestStreak=0,skipped=0;
-    let timerInterval=null,timeLeft=timePerQ,answered=false;
-    let escListener=null;
+    let timerInterval=null,timeLeft=timePerQ,answered=false,escListener=null;
 
     function clearTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
     function removeEscListener(){ if(escListener){document.removeEventListener('keydown',escListener);escListener=null;} }
@@ -694,19 +1030,19 @@
     function doAnswer(v){
       if(answered) return; answered=true;
       clearTimer(); removeEscListener(); lockInput();
-      const fb=document.getElementById('fb'), card=document.querySelector('.card'), inp=document.getElementById('inp'), sb=document.getElementById('sb');
+      const fb=document.getElementById('fb'), inp=document.getElementById('inp'), sb=document.getElementById('sb');
       if(v===questions[current].answer){
         score++; streak++; if(streak>bestStreak) bestStreak=streak;
         let bonusHtml=''; if((timeLeft/timePerQ)>=bonusThreshold){ bonusScore++; bonusHtml=`<span class="time-bonus">${t().time_bonus}</span>`; }
         if(inp) inp.classList.add('correct');
         if(fb){ fb.innerHTML=`${t().correct_msg}${bonusHtml}`; fb.className='feedback ok'; }
-        if(card){ card.classList.add('flash-ok'); setTimeout(()=>card.classList.remove('flash-ok'),500); }
+        card.classList.add('flash-ok'); setTimeout(()=>card.classList.remove('flash-ok'),500);
         if(sb){ sb.textContent='🔥 '+streak; sb.classList.remove('pop'); void sb.offsetWidth; sb.classList.add('pop'); }
         soundCorrect();
       } else {
         streak=0; if(inp) inp.classList.add('wrong');
         if(fb){ fb.textContent=`${t().wrong_prefix} ${questions[current].answer}`; fb.className='feedback err'; }
-        if(card){ card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400); }
+        card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),400);
         if(sb) sb.textContent='🔥 0'; soundWrong();
       }
       setTimeout(advance, 1200);
@@ -724,16 +1060,14 @@
         </div>
         <div class="timer-wrap">
           <div class="timer-meta"><span>${t().timer_label}</span><span id="tl">${timePerQ}s</span></div>
-          <div class="timer-track" id="timer-track" role="progressbar" aria-label="${t().timer_label}"
-              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+          <div class="timer-track" id="timer-track" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
             <div class="timer-fill" id="tf" style="width:100%"></div>
           </div>
         </div>
         <div class="q-label"><span class="q-label-left">${t().q_label} ${current+1} / ${total}</span></div>
-        <div class="q-text" aria-label="Question">${q.display} = ?</div>
+        <div class="q-text">${q.display} = ?</div>
         <div class="input-wrap">
-          <input id="inp" class="input" type="number" placeholder="…"
-            aria-label="Your answer" autocomplete="off" autofocus>
+          <input id="inp" class="input" type="number" placeholder="…" aria-label="Your answer" autocomplete="off" autofocus>
         </div>
         <div class="feedback" id="fb" role="alert" aria-live="assertive"></div>
         <button class="btn" id="go">${t().submit}</button>
@@ -746,7 +1080,7 @@
         timeLeft=Math.max(0,timeLeft-0.1); const p=(timeLeft/timePerQ)*100;
         if(fill){ fill.style.width=p+'%'; fill.className='timer-fill'+(p<30?' danger':p<60?' warn':''); }
         if(tEl) tEl.textContent=Math.ceil(timeLeft)+'s';
-        if(timeLeft<=0){ clearTimer(); if(!answered) { streak=0; soundTimeout(); doAnswer(null); } }
+        if(timeLeft<=0){ clearTimer(); if(!answered){ streak=0; soundTimeout(); doAnswer(null); } }
       },100);
       escListener=(e)=>{ if(e.key==='Escape'){ clearTimer(); skipped++; streak=0; soundSkip(); advance(); } };
       document.addEventListener('keydown',escListener);
@@ -756,11 +1090,11 @@
     showQuestion();
   }
 
-  /* ── RESULT ── */
+  /* ── CLASSIC RESULT ── */
   function showResult(score,total,bestStreak,bonusScore,skipped,diff,mode){
     currentScreen=()=>showResult(score,total,bestStreak,bonusScore,skipped,diff,mode);
     const missed=total-score, pct=total>0?Math.round((score/total)*100):0, scaled=Math.round((score/total)*20), g=gradeInfo(score,total);
-    addHistory({ts:Date.now(),score,total,scaled,pct,bestStreak,bonusScore,skipped,diff,mode,gradeLabel:g.label,gradeCls:g.cls});
+    addHistory({ts:Date.now(),score,total,scaled,pct,bestStreak,bonusScore,skipped,diff,mode,rush:false,gradeLabel:g.label,gradeCls:g.cls});
     render(`
       ${topBar('badge_result')}
       <div class="q-label"><span class="q-label-left">${t().result_label}</span></div>
@@ -779,7 +1113,7 @@
       <button class="btn btn-outline" id="change">${t().change_q}</button>
       <button class="btn btn-ghost" id="hist">${t().view_history}</button>
     `);
-    [score, missed, scaled, pct, bestStreak, bonusScore].forEach((v,i)=>animateCount(document.getElementById('sn'+i),v,700));
+    [score,missed,scaled,pct,bestStreak,bonusScore].forEach((v,i)=>animateCount(document.getElementById('sn'+i),v,700));
     document.getElementById('again').addEventListener('click',()=>startGame(total,diff,mode));
     document.getElementById('change').addEventListener('click',showSetup);
     document.getElementById('hist').addEventListener('click',showHistory);
@@ -788,20 +1122,71 @@
   /* ── HISTORY ── */
   function showHistory(){
     currentScreen=showHistory;
-    const history=loadHistory();
-    let rows=history.length===0?`<p class="history-empty">${t().history_empty}</p>`:`<div class="history-list">`+
-      history.map(h=>`<div class="history-row"><div><div class="history-row-top"><span class="history-score">${h.score}/${h.total} · ${h.pct}%</span>
-      <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span></div>
-      <div class="history-row-bottom"><span class="history-date">${formatDate(h.ts)}</span>
-      <span class="history-meta-tag">${T[lang][h.diff]||h.diff}</span><span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
-      ${h.bestStreak?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}</div></div></div>`).join('')+`</div>`;
+    const all = loadHistory();
+    const filtered = histTab==='all' ? all : histTab==='rush' ? all.filter(h=>h.rush) : all.filter(h=>!h.rush);
+
+    function rowsHtml(list){
+      if(list.length===0) return `<p class="history-empty">${t().history_empty}</p>`;
+      return `<div class="history-list">`+
+        list.map(h=>`<div class="history-row${h.rush?' rush-row':''}">
+          <div>
+            <div class="history-row-top">
+              <span class="history-score${h.rush?' rush-score':''}">${h.rush?'⚡'+h.score+' '+t().rush_solved:h.score+'/'+h.total+' · '+h.pct+'%'}</span>
+              <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span>
+            </div>
+            <div class="history-row-bottom">
+              <span class="history-date">${formatDate(h.ts)}</span>
+              <span class="history-meta-tag${h.rush?' rush-tag':''}">${h.rush?t().rush_tag:(T[lang][h.diff]||h.diff)}</span>
+              <span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
+              ${h.bestStreak?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}
+            </div>
+          </div>
+        </div>`).join('')+`</div>`;
+    }
+
     render(`
       ${topBar('badge_history')}
-      <div class="history-header"><div class="history-title">${t().history_title}</div>${history.length>0?`<button class="clear-btn" id="clr">${t().clear_history}</button>`:''}</div>
-      ${rows}<div class="divider"></div><button class="btn btn-outline" id="back">${t().back}</button>
+      <div class="history-header">
+        <div class="history-title">${t().history_title}</div>
+        ${all.length>0?`<button class="clear-btn" id="clr">${t().clear_history}</button>`:''}
+      </div>
+      <div class="history-tabs">
+        <button class="hist-tab${histTab==='all'?' active':''}" data-htab="all">${t().hist_tab_all}</button>
+        <button class="hist-tab${histTab==='classic'?' active':''}" data-htab="classic">${t().hist_tab_classic}</button>
+        <button class="hist-tab${histTab==='rush'?' rush-tab-inactive':''+(histTab==='rush'?' rush-tab-active':'')}" data-htab="rush">${t().hist_tab_rush}</button>
+      </div>
+      <div id="hist-rows">${rowsHtml(filtered)}</div>
+      <div class="divider"></div>
+      <button class="btn btn-outline" id="back">${t().back}</button>
     `);
+
     document.getElementById('back').addEventListener('click', showDashboard);
-    const clr=document.getElementById('clr'); if(clr) clr.addEventListener('click',()=>{clearHistory();showDashboard();});
+    const clr=document.getElementById('clr');
+    if(clr) clr.addEventListener('click',()=>{clearHistory();histTab='all';showHistory();});
+
+    document.querySelectorAll('.hist-tab').forEach(b=>{
+      b.addEventListener('click',()=>{
+        histTab=b.dataset.htab;
+        document.querySelectorAll('.hist-tab').forEach(x=>{
+          x.classList.remove('active','rush-tab-active','rush-tab-inactive');
+          if(x===b){
+            if(histTab==='rush') x.classList.add('rush-tab-active');
+            else x.classList.add('active');
+          } else {
+            if(x.dataset.htab==='rush') x.classList.add('rush-tab-inactive');
+          }
+        });
+        const rh = loadHistory();
+        const f2 = histTab==='all'?rh:histTab==='rush'?rh.filter(h=>h.rush):rh.filter(h=>!h.rush);
+        const el = document.getElementById('hist-rows');
+        if(el) el.innerHTML=rowsHtml(f2);
+      });
+    });
+
+    // Fix rush tab initial classes
+    document.querySelectorAll('.hist-tab').forEach(x=>{
+      if(x.dataset.htab==='rush' && histTab!=='rush') x.classList.add('rush-tab-inactive');
+    });
   }
 
   /* ── Boot ── */
