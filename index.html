@@ -377,30 +377,17 @@
     .history-list::-webkit-scrollbar{width:4px;}
     .history-list::-webkit-scrollbar-track{background:transparent;}
     .history-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-    .history-row{
-      background:var(--bg3);padding:0.7rem 1rem;
-      display:flex;gap:0.5rem;align-items:center;
-      font-size:0.78rem;transition:background 0.15s;
-    }
+    .history-row{background:var(--bg3);padding:0.7rem 1rem;display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:center;font-size:0.78rem;transition:background 0.15s;}
     .history-row:hover{background:var(--bg2);}
     .history-row.rush-row{border-left:2px solid var(--rush);}
-    .history-row-main{flex:1;min-width:0;}
     .history-row-top{display:flex;justify-content:space-between;align-items:center;gap:0.5rem;}
-    .history-row-bottom{display:flex;align-items:center;gap:0.5rem;margin-top:2px;flex-wrap:wrap;}
+    .history-row-bottom{display:flex;align-items:center;gap:0.5rem;margin-top:2px;}
     .history-date{color:var(--muted);font-size:0.66rem;}
     .history-score{color:var(--accent);font-weight:500;white-space:nowrap;font-size:0.8rem;}
     .history-score.rush-score{color:var(--rush);}
     .history-grade{font-size:0.62rem;padding:2px 7px;border-radius:2px;white-space:nowrap;}
     .history-meta-tag{font-size:0.6rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:0.05em;}
     .history-meta-tag.rush-tag{color:var(--rush);border-color:var(--rush-border);background:var(--rush-dim);}
-
-    /* ── Per-entry delete button ── */
-    .del-btn{
-      background:transparent;border:none;color:var(--muted);
-      font-size:0.85rem;padding:4px 6px;border-radius:2px;cursor:pointer;
-      transition:color 0.2s,background 0.2s;line-height:1;flex-shrink:0;
-    }
-    .del-btn:hover{color:var(--danger);background:rgba(248,113,113,0.08);}
 
     @media(max-width:500px){
       .card{padding:1.8rem 1.5rem;}
@@ -723,6 +710,10 @@
     const best = allTimeBestStreak();
     const rr = getRushStats();
 
+    if (stats.games === 0 && loadHistory().filter(h=>h.isRush).length === 0) {
+      // First time: show dashboard with just the two action buttons, skip stats
+    }
+
     render(`
       ${topBar('badge_dashboard')}
       <div class="q-label"><span class="q-label-left">${t().dash_title}</span></div>
@@ -950,6 +941,7 @@
       });
     });
 
+    // Add rush card style
     const card = document.querySelector('.card');
     if(card) card.classList.add('rush-mode');
 
@@ -959,12 +951,13 @@
 
   /* ── RUSH GAME ── */
   function startRushGame(diff, mode){
+    // Truly unlimited — generate in batches, never stops until death
     let questions = makeQuestions(100, diff, mode);
     const timePerQ = DIFFICULTY[diff].timePerQ;
     let current = 0, survived = 0;
     let timerInterval = null, timeLeft = timePerQ, answered = false;
     let escListener = null;
-    let deathReason = null;
+    let deathReason = null; // 'wrong' | 'timeout'
 
     function clearTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
     function removeEscListener(){ if(escListener){document.removeEventListener('keydown',escListener);escListener=null;} }
@@ -1003,6 +996,7 @@
     }
 
     function showRushQuestion(){
+      // Extend question pool if needed
       if(current >= questions.length) questions = questions.concat(makeQuestions(100, diff, mode));
       currentScreen = showRushQuestion; answered = false;
       const q = questions[current];
@@ -1037,6 +1031,7 @@
         <p class="hint">${t().hint} <kbd>Enter</kbd></p>
       `);
 
+      // Add rush-mode class to card
       const card = document.querySelector('.card');
       if(card) card.classList.add('rush-mode');
 
@@ -1061,7 +1056,7 @@
         }
       },100);
 
-      escListener=null;
+      escListener=null; // No skip in rush mode
       document.getElementById('go').addEventListener('click',()=>doAnswer(parseInt(inp.value)));
       inp.addEventListener('keydown',e=>{if(e.key==='Enter') doAnswer(parseInt(inp.value));});
     }
@@ -1099,6 +1094,7 @@
       <button class="btn btn-ghost" id="hist">${t().view_history}</button>
     `);
 
+    // Add rush-mode class to card
     const card = document.querySelector('.card');
     if(card) card.classList.add('rush-mode');
 
@@ -1145,61 +1141,31 @@
   function showHistory(){
     currentScreen=showHistory;
     const history=loadHistory();
-
-    let rows = history.length === 0
-      ? `<p class="history-empty">${t().history_empty}</p>`
-      : `<div class="history-list">` +
-        history.map((h, i) => {
-          const isRush = !!h.isRush;
-          const scoreLabel = isRush
-            ? `⚡ ${h.score} ${t().rush_survived}`
-            : `${h.score}/${h.total} · ${h.pct||0}%`;
-          const rowCls   = isRush ? ' rush-row' : '';
-          const scoreCls = isRush ? ' rush-score' : '';
-          const rushTag  = isRush ? `<span class="history-meta-tag rush-tag">RUSH</span>` : '';
-          return `<div class="history-row${rowCls}">
-            <div class="history-row-main">
-              <div class="history-row-top">
-                <span class="history-score${scoreCls}">${scoreLabel}</span>
-                <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span>
-              </div>
-              <div class="history-row-bottom">
-                <span class="history-date">${formatDate(h.ts)}</span>
-                ${rushTag}
-                <span class="history-meta-tag">${T[lang][h.diff]||h.diff}</span>
-                <span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
-                ${!isRush && h.bestStreak ? `<span class="history-meta-tag">🔥${h.bestStreak}</span>` : ''}
-              </div>
-            </div>
-            <button class="del-btn" data-idx="${i}" title="Delete entry" aria-label="Delete this entry">✕</button>
-          </div>`;
-        }).join('') + `</div>`;
-
+    let rows=history.length===0?`<p class="history-empty">${t().history_empty}</p>`:`<div class="history-list">`+
+      history.map(h=>{
+        const isRush = !!h.isRush;
+        const scoreLabel = isRush
+          ? `⚡ ${h.score} ${t().rush_survived}`
+          : `${h.score}/${h.total} · ${h.pct||0}%`;        const rowCls = isRush ? ' rush-row' : '';
+        const scoreCls = isRush ? ' rush-score' : '';
+        const rushTag = isRush ? `<span class="history-meta-tag rush-tag">RUSH</span>` : '';
+        return `<div class="history-row${rowCls}"><div>
+          <div class="history-row-top"><span class="history-score${scoreCls}">${scoreLabel}</span>
+          <span class="history-grade grade-tag ${h.gradeCls}" style="margin:0">${h.gradeLabel}</span></div>
+          <div class="history-row-bottom"><span class="history-date">${formatDate(h.ts)}</span>
+          ${rushTag}
+          <span class="history-meta-tag">${T[lang][h.diff]||h.diff}</span>
+          <span class="history-meta-tag">${MODE_LABELS[h.mode]||h.mode}</span>
+          ${!isRush && h.bestStreak?`<span class="history-meta-tag">🔥${h.bestStreak}</span>`:''}</div>
+          </div></div>`;
+      }).join('')+`</div>`;
     render(`
       ${topBar('badge_history')}
-      <div class="history-header">
-        <div class="history-title">${t().history_title}</div>
-        ${history.length > 0 ? `<button class="clear-btn" id="clr">${t().clear_history}</button>` : ''}
-      </div>
-      ${rows}
-      <div class="divider"></div>
-      <button class="btn btn-outline" id="back">${t().back}</button>
+      <div class="history-header"><div class="history-title">${t().history_title}</div>${history.length>0?`<button class="clear-btn" id="clr">${t().clear_history}</button>`:''}</div>
+      ${rows}<div class="divider"></div><button class="btn btn-outline" id="back">${t().back}</button>
     `);
-
     document.getElementById('back').addEventListener('click', showDashboard);
-
-    const clr = document.getElementById('clr');
-    if(clr) clr.addEventListener('click', () => { clearHistory(); showDashboard(); });
-
-    document.querySelectorAll('.del-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.idx);
-        const h = loadHistory();
-        h.splice(idx, 1);
-        localStorage.setItem('quiz-history', JSON.stringify(h));
-        showHistory(); // re-render in place
-      });
-    });
+    const clr=document.getElementById('clr'); if(clr) clr.addEventListener('click',()=>{clearHistory();showDashboard();});
   }
 
   /* ── Boot ── */
