@@ -590,7 +590,7 @@
   function addHistory(item){
     const h=loadHistory();
     h.unshift(item);
-    localStorage.setItem('quiz-history',JSON.stringify(h.slice(0,50)));
+    localStorage.setItem('quiz-history',JSON.stringify(h.slice(0,50000)));
   }
   function clearHistory(){ localStorage.removeItem('quiz-history'); }
   function allTimeBestStreak(){ return loadHistory().reduce((m,h)=>Math.max(m,h.bestStreak||0),0); }
